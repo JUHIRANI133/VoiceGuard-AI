@@ -13,6 +13,8 @@ import { ScrollArea } from '../ui/scroll-area';
 import { AppContext } from '@/contexts/app-context';
 import { useContext } from 'react';
 import { callHistory } from '@/lib/mock-data';
+import { Input } from '../ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 export default function HomePanel() {
   const { startMockCall } = useContext(AppContext);
@@ -22,6 +24,8 @@ export default function HomePanel() {
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [currentCall, setCurrentCall] = useState<(typeof callHistory)[0] | null>(null);
   const audioCache = useRef<Record<number, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
 
   const handlePlayAudio = async (call: typeof callHistory[0]) => {
@@ -42,6 +46,11 @@ export default function HomePanel() {
       setAudioDataUri(audioDataUri);
     } catch (error) {
       console.error("Failed to generate speech:", error);
+      toast({
+        title: "Audio Generation Failed",
+        description: "Could not generate audio for this call. You may have exceeded the API rate limit.",
+        variant: "destructive"
+      });
       setAudioDataUri(null);
     } finally {
       setIsLoadingAudio(false);
@@ -51,6 +60,22 @@ export default function HomePanel() {
   const handleShowTranscript = (call: typeof callHistory[0]) => {
     setCurrentCall(call);
     setIsTranscriptOpen(true);
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // TODO: Implement file analysis logic
+      console.log('Selected file:', file.name);
+      toast({
+          title: "File Uploaded",
+          description: `${file.name} is ready for analysis. This feature is not yet implemented.`,
+      });
+    }
   };
 
   return (
@@ -102,9 +127,10 @@ export default function HomePanel() {
               </p>
             </CardContent>
             <CardFooter>
-              <Button size="lg" variant="outline" className="w-full font-bold glassmorphic border-primary text-primary hover:shadow-[0_0_15px_hsl(var(--primary))] hover:border-primary/80 hover:text-white">
+              <Button size="lg" variant="outline" className="w-full font-bold glassmorphic border-primary text-primary hover:shadow-[0_0_15px_hsl(var(--primary))] hover:border-primary/80 hover:text-white" onClick={handleUploadClick}>
                   <Upload className="mr-2" /> Upload Audio
               </Button>
+              <Input type="file" ref={fileInputRef} onChange={handleFileChange} accept="audio/mp3, audio/wav" className="hidden" />
             </CardFooter>
           </Card>
         </div>

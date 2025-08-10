@@ -6,10 +6,12 @@ import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar'
 import AppSidebar from '@/components/layout/app-sidebar';
 import HomePanel from '@/components/panels/home-panel';
 import LiveCallPanel from '@/components/panels/live-call-panel';
-import IncidentReportsPanel from '@/components/panels/incident-reports-panel';
-import KnowledgeHubPanel from '@/components/panels/knowledge-hub-panel';
 import SettingsPanel from '@/components/panels/settings-panel';
 import FloatingWidget from '@/components/floating-widget';
+import ContactsPanel from './panels/contacts-panel';
+import EmotionalTrackerPanel from './panels/emotional-tracker-panel';
+import TranscriptPanel from './panels/transcript-panel';
+import ScamMapPanel from './panels/scam-map-panel';
 
 export default function Dashboard() {
   const { isCallActive, activePanel } = useContext(AppContext);
@@ -21,10 +23,14 @@ export default function Dashboard() {
     switch (activePanel) {
       case 'home':
         return <HomePanel />;
-      case 'reports':
-        return <IncidentReportsPanel />;
-      case 'knowledge':
-        return <KnowledgeHubPanel />;
+      case 'contacts':
+        return <ContactsPanel />;
+      case 'emotional-tracker':
+        return <EmotionalTrackerPanel />;
+      case 'transcript':
+        return <TranscriptPanel />;
+      case 'scam-map':
+        return <ScamMapPanel />;
       case 'settings':
         return <SettingsPanel />;
       default:

@@ -1,4 +1,4 @@
-export type Panel = 'home' | 'reports' | 'knowledge' | 'settings' | 'live-call';
+export type Panel = 'home' | 'contacts' | 'emotional-tracker' | 'transcript' | 'scam-map' | 'settings' | 'live-call';
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 

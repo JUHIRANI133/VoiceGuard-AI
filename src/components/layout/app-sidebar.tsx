@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from 'react';
-import { ShieldCheck, LayoutDashboard, FolderClock, BookOpen, Settings, Globe } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, Contact, HeartPulse, FileText, Map, Settings, Globe } from 'lucide-react';
 import {
   SidebarHeader,
   SidebarContent,
@@ -18,9 +18,11 @@ export default function AppSidebar() {
   const { activePanel, setActivePanel, isCallActive } = useContext(AppContext);
 
   const menuItems = [
-    { id: 'home', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'reports', label: 'Incident Reports', icon: FolderClock },
-    { id: 'knowledge', label: 'Knowledge Hub', icon: BookOpen },
+    { id: 'home', label: 'Home', icon: LayoutDashboard },
+    { id: 'contacts', label: 'Contacts', icon: Contact },
+    { id: 'emotional-tracker', label: 'Emotional Tracker', icon: HeartPulse },
+    { id: 'transcript', label: 'Transcript', icon: FileText },
+    { id: 'scam-map', label: 'Scam Map', icon: Map },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 

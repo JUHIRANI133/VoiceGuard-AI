@@ -31,15 +31,13 @@ export const AppContext = createContext<AppContextType>({
 });
 
 const mockTranscription = [
-  "Namaste, is this Aruna Mehta?",
-  "Yes, speaking. Who is this?",
-  "Ma'am, I am calling from your bank's KYC department. Your account will be blocked if you do not update your PAN card details immediately.",
-  "Oh my! But I just did this last month. Are you sure?",
-  "Yes ma'am, it is a new RBI mandate. To avoid suspension, you must click the link I just sent you via SMS and enter your details. It is very urgent.",
-  "A link via SMS? My bank always says never to click such links. This sounds suspicious.",
-  "Ma'am, this is a secure portal! Your account will be frozen in 10 minutes if you don't comply. Do you want to lose access to all your money? Think of the trouble!",
-  "My phone is giving me a scam alert... I am not comfortable with this. I will visit the branch tomorrow.",
-  "There is no time for that! You must do it now! This is your final warning!"
+  { speaker: 'Caller', text: "Mom... it's me, Aarav. Please don't panic... I've had an accident." },
+  { speaker: 'You', text: "Oh my God! Aarav, are you alright? Where are you?" },
+  { speaker: 'Caller', text: "I'm in the hospital. They won't treat me unless I pay the admission fee... ?50,000 right now. Please, Mom, I'm scared.", riskIncrease: 30, rationale: "Sudden accident claim and urgent demand for money are classic scam indicators.", analysis: { sentiment: 'Stressed' } },
+  { speaker: 'You', text: "But... your phone sounds different." },
+  { speaker: 'Caller', text: "It's the hospital's phone. Mom, there's no time, please transfer the money to this account immediately. I'll explain later.", riskIncrease: 40, rationale: "High-pressure tactics and a request for an immediate, unverified bank transfer are major red flags. Voice analysis suggests a potential deepfake.", analysis: { urgency: true, syntheticVoice: true } },
+  { speaker: 'You', text: "This is all too fast. My phone is warning me this could be a scam. Let me call your father." },
+  { speaker: 'Caller', text: "No, don't! There's no time! If you don't send the money in the next 5 minutes, it'll be too late!", riskIncrease: 20, rationale: "Extreme urgency and attempts to isolate the victim are hallmarks of a sophisticated scam.", analysis: { sentiment: 'Threatening' } }
 ];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -68,17 +66,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isCallActive: true,
       activePanel: 'live-call',
       callData: {
-        callerName: 'Unknown',
-        callerNumber: '+91 98765 43210',
+        callerName: 'Aarav (Son) - Impersonated',
+        callerNumber: '+91 91234 56789',
         riskScore: 10,
         transcription: '',
-        rationale: 'Call initiated. Monitoring for suspicious activity.',
+        rationale: 'Call initiated. Voice analysis suggests potential voice cloning. Monitoring for suspicious activity.',
         analysis: {
-            voiceprintMatch: 92,
+            voiceprintMatch: 55,
             numberLegitimacy: 'Verified',
             sentiment: 'Neutral',
             urgency: false,
-            syntheticVoice: false,
+            syntheticVoice: true,
         }
       },
       riskLevel: 'low',
@@ -90,30 +88,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             return;
         }
 
-        const newPhrase = mockTranscription[transcriptionIndexRef.current];
+        const currentSegment = mockTranscription[transcriptionIndexRef.current];
         transcriptionIndexRef.current += 1;
         
         setState(prevState => {
-            const newTranscription = `${prevState.callData.transcription}${transcriptionIndexRef.current % 2 !== 0 ? '\n\nCaller: ' : '\n\nYou: '}${newPhrase}`;
+            const newTranscription = `${prevState.callData.transcription}${prevState.callData.transcription ? '\n\n' : ''}${currentSegment.speaker}: ${currentSegment.text}`;
             let newRiskScore = prevState.callData.riskScore;
             let newRationale = prevState.callData.rationale;
             let newAnalysis = { ...prevState.callData.analysis };
             
-            if (transcriptionIndexRef.current > 2) {
-                newRiskScore = Math.min(100, prevState.callData.riskScore + 20);
-                newRationale = "Impersonating a bank official is a common tactic. The sense of urgency is a red flag.";
+            if (currentSegment.riskIncrease) {
+              newRiskScore = Math.min(100, newRiskScore + currentSegment.riskIncrease);
             }
-             if (transcriptionIndexRef.current > 4) {
-                newRiskScore = Math.min(100, prevState.callData.riskScore + 30);
-                newAnalysis.numberLegitimacy = 'Spoofed';
-                newAnalysis.sentiment = 'Negative';
-                newRationale = "Requesting action via an unknown SMS link is a classic phishing attempt.";
+
+            if(currentSegment.rationale) {
+              newRationale = currentSegment.rationale;
             }
-            if (transcriptionIndexRef.current > 6) {
-                newRiskScore = 100;
-                newAnalysis.urgency = true;
-                newAnalysis.syntheticVoice = true;
-                newRationale = "High-pressure tactics, threats, and urgency detected. Synthetic voice analysis indicates a high probability of a deepfake.";
+
+            if(currentSegment.analysis) {
+                newAnalysis = { ...newAnalysis, ...currentSegment.analysis };
             }
             
             const newRiskLevel = newRiskScore > 75 ? 'high' : newRiskScore > 40 ? 'medium' : 'low';
@@ -131,7 +124,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             }
         });
 
-    }, 3000);
+    }, 4000);
   };
   
   const setActivePanel = (panel: AppState['activePanel']) => {

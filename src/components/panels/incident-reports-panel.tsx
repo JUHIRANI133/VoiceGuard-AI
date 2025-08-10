@@ -8,10 +8,18 @@ import { FileText, Share2, AlertTriangle, ShieldCheck, HelpCircle } from "lucide
 import type { RiskLevel } from "@/types";
 
 const mockReports = [
-  { date: "2024-08-14", caller: "+1 (555) 123-4567", risk: "high", type: "Impersonation", verification: "Spoofed" },
-  { date: "2024-08-13", caller: "Unknown Number", risk: "medium", type: "Urgency Tactics", verification: "Unknown" },
-  { date: "2024-08-12", caller: "+1 (222) 333-4444", risk: "low", type: "Safe", verification: "Verified" },
-  { date: "2024-08-10", caller: "+1 (777) 888-9999", risk: "high", type: "Tech Support Scam", verification: "Spoofed" },
+  { date: "2024-08-14", caller: "Rohan Kumar", number: "+91 98765 43210", risk: "high", type: "Impersonation", verification: "Spoofed" },
+  { date: "2024-08-13", caller: "Priya Sharma", number: "Unknown", risk: "medium", type: "Urgency Tactics", verification: "Unknown" },
+  { date: "2024-08-12", caller: "Amit Singh", number: "+91 87654 32109", risk: "low", type: "Safe", verification: "Verified" },
+  { date: "2024-08-11", caller: "Anjali Gupta", number: "+91 76543 21098", risk: "high", type: "Tech Support Scam", verification: "Spoofed" },
+  { date: "2024-08-10", caller: "Vikram Mehta", number: "+91 99887 76655", risk: "high", type: "Bank Fraud", verification: "Spoofed" },
+  { date: "2024-08-09", caller: "Sneha Reddy", number: "Unknown", risk: "medium", type: "Lottery Scam", verification: "Unknown" },
+  { date: "2024-08-08", caller: "Deepak Yadav", number: "+91 88776 65544", risk: "low", type: "Safe", verification: "Verified" },
+  { date: "2024-08-07", caller: "Sunita Devi", number: "+91 77665 54433", risk: "high", type: "Job Offer Scam", verification: "Spoofed" },
+  { date: "2024-08-06", caller: "Rajesh Patel", number: "+91 91234 56789", risk: "medium", type: "KYC Update Scam", verification: "Unknown" },
+  { date: "2024-08-05", caller: "Pooja Desai", number: "+91 82345 67890", risk: "high", type: "Electricity Bill Fraud", verification: "Spoofed" },
+  { date: "2024-08-04", caller: "Sanjay Verma", number: "Unknown", risk: "low", type: "Safe", verification: "Verified" },
+  { date: "2024-08-03", caller: "Meera Iyer", number: "+91 73456 78901", risk: "medium", type: "Investment Scam", verification: "Spoofed" }
 ];
 
 const RiskBadge = ({ risk }: { risk: RiskLevel }) => {
@@ -48,7 +56,8 @@ export default function IncidentReportsPanel() {
             <TableHeader>
               <TableRow className="hover:bg-transparent border-b-white/20">
                 <TableHead>Date</TableHead>
-                <TableHead>Caller ID</TableHead>
+                <TableHead>Caller</TableHead>
+                <TableHead>Caller Number</TableHead>
                 <TableHead>Risk Level</TableHead>
                 <TableHead>Detected Threat</TableHead>
                 <TableHead>Verification</TableHead>
@@ -60,6 +69,7 @@ export default function IncidentReportsPanel() {
                 <TableRow key={index} className="glassmorphic-row border-b-white/10">
                   <TableCell>{report.date}</TableCell>
                   <TableCell>{report.caller}</TableCell>
+                  <TableCell>{report.number}</TableCell>
                   <TableCell><RiskBadge risk={report.risk as RiskLevel} /></TableCell>
                   <TableCell>{report.type}</TableCell>
                   <TableCell>{report.verification}</TableCell>

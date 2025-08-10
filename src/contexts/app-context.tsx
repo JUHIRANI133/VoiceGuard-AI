@@ -31,14 +31,15 @@ export const AppContext = createContext<AppContextType>({
 });
 
 const mockTranscription = [
-  "Hello? Is this grandma?",
-  "Yes, it's me. Listen, I'm in a bit of trouble.",
-  "What happened? Are you okay?",
-  "I was arrested, and I need you to send $2,000 in gift cards right away. Don't tell anyone, especially mom and dad. It has to be a secret.",
-  "Gift cards? That sounds strange. Are you sure it's you?",
-  "Yes, of course, it's me! My voice is a little weird because I have a cold. You have to hurry, they're going to keep me here if you don't send the money now!",
-  "This feels wrong. I'm getting an alert on my phone...",
-  "Don't listen to that! It's a trick! Just send the gift cards to the address I'm texting you. Please, you have to do it now!"
+  "Namaste, is this Mrs. Sharma?",
+  "Yes, speaking. Who is this?",
+  "Ma'am, I am calling from your bank's KYC department. Your account will be blocked if you do not update your PAN card details immediately.",
+  "Oh my! But I just did this last month. Are you sure?",
+  "Yes ma'am, it is a new RBI mandate. To avoid suspension, you must click the link I just sent you via SMS and enter your details. It is very urgent.",
+  "A link via SMS? My bank always says never to click such links. This sounds suspicious.",
+  "Ma'am, this is a secure portal! Your account will be frozen in 10 minutes if you don't comply. Do you want to lose access to all your money? Think of the trouble!",
+  "My phone is giving me a scam alert... I am not comfortable with this. I will visit the branch tomorrow.",
+  "There is no time for that! You must do it now! This is your final warning!"
 ];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -67,13 +68,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isCallActive: true,
       activePanel: 'live-call',
       callData: {
-        callerName: 'Unknown Number',
-        callerNumber: '+1 (888) 555-0199',
+        callerName: 'Rohan Kumar',
+        callerNumber: '+91 98765 43210',
         riskScore: 10,
         transcription: '',
         rationale: 'Call initiated. Monitoring for suspicious activity.',
         analysis: {
-            voiceprintMatch: 88,
+            voiceprintMatch: 92,
             numberLegitimacy: 'Verified',
             sentiment: 'Neutral',
             urgency: false,
@@ -93,27 +94,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         transcriptionIndexRef.current += 1;
         
         setState(prevState => {
-            const newTranscription = `${prevState.callData.transcription}\n\nCaller: ${newPhrase}`;
+            const newTranscription = `${prevState.callData.transcription}${transcriptionIndexRef.current % 2 !== 0 ? '\n\nCaller: ' : '\n\nYou: '}${newPhrase}`;
             let newRiskScore = prevState.callData.riskScore;
             let newRationale = prevState.callData.rationale;
             let newAnalysis = { ...prevState.callData.analysis };
             
-            if (transcriptionIndexRef.current > 1) {
-                newRiskScore = Math.min(100, prevState.callData.riskScore + 15);
-                newAnalysis.voiceprintMatch = Math.max(20, newAnalysis.voiceprintMatch - 10);
+            if (transcriptionIndexRef.current > 2) {
+                newRiskScore = Math.min(100, prevState.callData.riskScore + 20);
+                newRationale = "Impersonating a bank official is a common tactic. The sense of urgency is a red flag.";
             }
-             if (transcriptionIndexRef.current > 2) {
+             if (transcriptionIndexRef.current > 4) {
+                newRiskScore = Math.min(100, prevState.callData.riskScore + 30);
                 newAnalysis.numberLegitimacy = 'Spoofed';
-                newRationale = "Request for money and secrecy is a major red flag for grandparent scams.";
+                newAnalysis.sentiment = 'Negative';
+                newRationale = "Requesting action via an unknown SMS link is a classic phishing attempt.";
             }
-            if (transcriptionIndexRef.current > 3) {
-                 newAnalysis.sentiment = 'Negative';
-                 newRationale = "Demand for payment via gift cards is a classic scam tactic.";
-            }
-            if (transcriptionIndexRef.current > 4) {
+            if (transcriptionIndexRef.current > 6) {
+                newRiskScore = 100;
                 newAnalysis.urgency = true;
                 newAnalysis.syntheticVoice = true;
-                newRationale = "High-pressure tactics and urgency detected. Synthetic voice analysis indicates a high probability of a deepfake.";
+                newRationale = "High-pressure tactics, threats, and urgency detected. Synthetic voice analysis indicates a high probability of a deepfake.";
             }
             
             const newRiskLevel = newRiskScore > 75 ? 'high' : newRiskScore > 40 ? 'medium' : 'low';

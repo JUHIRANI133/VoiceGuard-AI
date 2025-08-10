@@ -15,7 +15,7 @@ import { useContext } from 'react';
 
 const callHistory = [
   { id: 1, type: 'Incoming', contact: 'Unknown', duration: '5:21', date: '2024-07-28', risk: 'high', transcript: "Speaker1: Namaste, is this Aruna Mehta? Speaker2: Yes, speaking. Who is this? Speaker1: Ma'am, I am calling from your bank's KYC department. Your account will be blocked if you do not update your PAN card details immediately. Speaker2: Oh my! But I just did this last month. Are you sure? Speaker1: Yes ma'am, it is a new RBI mandate. To avoid suspension, you must click the link I just sent you via SMS and enter your details. It is very urgent. Speaker2: A link via SMS? My bank always says never to click such links. This sounds suspicious. Speaker1: Ma'am, this is a secure portal! Your account will be frozen in 10 minutes if you don't comply. Do you want to lose access to all your money? Think of the trouble! Speaker2: My phone is giving me a scam alert... I am not comfortable with this. I will visit the branch tomorrow. Speaker1: There is no time for that! You must do it now! This is your final warning!", voice: 'Algenib' },
-  { id: 2, type: 'Incoming', contact: 'Aarav (Son)', duration: '3:15', date: '2024-07-28', risk: 'high', transcript: "Speaker1: [Voice trembling] “Mom… it’s me, Aarav. Please don’t panic… I’ve had an accident.” Speaker2: “Oh my God! Aarav, are you alright? Where are you?” Speaker1: “I’m in the hospital. They won’t treat me unless I pay the admission fee… ₹50,000 right now. Please, Mom, I’m scared.” Speaker2: “But… your phone sounds different.” Speaker1: “It’s the hospital’s phone. Mom, there’s no time, please transfer the money to this account immediately. I’ll explain later.”", voice: 'Sirius' },
+  { id: 2, type: 'Incoming', contact: 'Aarav (Son)', duration: '3:15', date: '2024-07-28', risk: 'high', transcript: "Speaker1: [Voice trembling] “Mom… it’s me, Aarav. Please don’t panic… I’ve had an accident.”\nMrs. Mehta: “Oh my God! Aarav, are you alright? Where are you?”\nAarav (Scammer): “I’m in the hospital. They won’t treat me unless I pay the admission fee… ₹50,000 right now. Please, Mom, I’m scared.”\nMrs. Mehta: “But… your phone sounds different.”\nAarav (Scammer): “It’s the hospital’s phone. Mom, there’s no time, please transfer the money to this account immediately. I’ll explain later.”", voice: 'Achernar' },
   { id: 3, type: 'Incoming', contact: 'Unknown', duration: '2:03', date: '2024-07-27', risk: 'medium', transcript: "Speaker1: Hello, you have won a lottery for 1 million rupees! To claim your prize, please pay a small transaction fee of 5000 rupees. Speaker2: A lottery? I don't remember entering one. This sounds like a scam. Speaker1: Sir, this is a legitimate offer! Don't miss this chance!", voice: 'Arcturus' },
   { id: 4, type: 'Incoming', contact: 'Aditya Verma', duration: '8:11', date: '2024-07-26', risk: 'low', transcript: "Speaker1: Hi Aditya, it's Aruna. I was calling about the project report. Have you had a chance to look at it? Speaker2: Yes, I have. It looks good, just a few minor changes needed. I'll send you an email.", voice: 'Vega' },
   { id: 5, 'type': 'Outgoing', 'contact': 'Priya Singh (Mom)', duration: '22:30', date: '2024-07-26', risk: 'low', transcript: "Speaker1: Hi Mom, how are you? Speaker2: I'm good beta, it's Aruna. Have you eaten? Don't work too late. Speaker1: Yes mom, I've eaten. I'll call you tomorrow.", voice: 'Capella' },
@@ -206,17 +206,27 @@ export default function HomePanel() {
           </DialogHeader>
            <ScrollArea className="h-[50vh] my-4">
                 <div className="text-sm leading-relaxed whitespace-pre-wrap font-mono p-4">
-                  {currentCall?.transcript.split('Speaker').map((part, index) => {
-                      if (index === 0) return part;
-                      const speakerId = part.substring(0, 1);
-                      const text = part.substring(2);
-                      const isCaller = speakerId === '1';
+                  {currentCall?.transcript.split(/Speaker\d:|Mrs\. Mehta:|Aarav \(Scammer\):/).map((part, index) => {
+                      if (index === 0) return part.trim() ? <p key={index}>{part.trim()}</p> : null;
+                      
+                      const fullMatch = currentCall?.transcript.match(/(Speaker\d:|Mrs\. Mehta:|Aarav \(Scammer\):)/g);
+                      const speakerLabel = fullMatch ? fullMatch[index - 1] : '';
+
+                      let speakerName = 'Unknown';
+                      let isCaller = false;
+                      if (speakerLabel.startsWith('Speaker1') || speakerLabel.startsWith('Aarav')) {
+                          speakerName = 'Caller';
+                          isCaller = true;
+                      } else if (speakerLabel.startsWith('Speaker2') || speakerLabel.startsWith('Mrs. Mehta')) {
+                          speakerName = 'You';
+                      }
+
                       return (
                           <div key={index} className={`mb-4 p-3 rounded-lg ${isCaller ? 'bg-primary/10' : 'bg-secondary/20'}`}>
                               <p className={`font-bold mb-1 ${isCaller ? 'text-primary' : 'text-foreground'}`}>
-                                {isCaller ? 'Caller' : 'You'}
+                                {speakerName}
                               </p>
-                              <p>{text.trim()}</p>
+                              <p>{part.trim()}</p>
                           </div>
                       );
                   })}

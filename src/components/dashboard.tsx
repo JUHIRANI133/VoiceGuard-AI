@@ -12,6 +12,7 @@ import ContactsPanel from './panels/contacts-panel';
 import EmotionalTrackerPanel from './panels/emotional-tracker-panel';
 import TranscriptPanel from './panels/transcript-panel';
 import ScamMapPanel from './panels/scam-map-panel';
+import ProfilePanel from './panels/profile-panel';
 
 export default function Dashboard() {
   const { isCallActive, activePanel } = useContext(AppContext);
@@ -23,6 +24,8 @@ export default function Dashboard() {
     switch (activePanel) {
       case 'home':
         return <HomePanel />;
+      case 'profile':
+        return <ProfilePanel />;
       case 'contacts':
         return <ContactsPanel />;
       case 'emotional-tracker':

@@ -68,7 +68,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isCallActive: true,
       activePanel: 'live-call',
       callData: {
-        callerName: 'Rohan Kumar',
+        callerName: 'Unknown',
         callerNumber: '+91 98765 43210',
         riskScore: 10,
         transcription: '',

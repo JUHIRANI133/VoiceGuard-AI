@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from 'react';
-import { ShieldCheck, LayoutDashboard, Contact, HeartPulse, FileText, Map, Settings, Globe } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, Contact, HeartPulse, FileText, Map, Settings, Globe, User } from 'lucide-react';
 import {
   SidebarHeader,
   SidebarContent,
@@ -19,6 +19,7 @@ export default function AppSidebar() {
 
   const menuItems = [
     { id: 'home', label: 'Home', icon: LayoutDashboard },
+    { id: 'profile', label: 'Profile', icon: User },
     { id: 'contacts', label: 'Contacts', icon: Contact },
     { id: 'emotional-tracker', label: 'Emotional Tracker', icon: HeartPulse },
     { id: 'transcript', label: 'Transcript', icon: FileText },

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { callHistory } from "@/lib/mock-data";
+import { callHistory, callDescriptions } from "@/lib/mock-data";
 import { AlertTriangle, CheckCircle, Heart, Bot, Smile, Annoyed, Bomb, FileText, Frown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
@@ -21,17 +21,6 @@ const emotionIcons: { [key: string]: { icon: React.ElementType, color: string } 
   Happy: { icon: Smile, color: 'text-green-500' },
   Sad: { icon: Frown, color: 'text-blue-500' },
   Casual: { icon: Bot, color: 'text-gray-500' },
-};
-
-const callDescriptions: { [key: number]: string } = {
-    1: "A classic KYC (Know Your Customer) scam where the caller impersonates a bank official to create urgency and steal personal information via a phishing link.",
-    2: "A sophisticated voice cloning scam where the scammer uses the cloned voice of Aruna's son, Aarav, to feign an emergency and request immediate funds.",
-    3: "An impersonation scam where the caller pretends to be Aruna's friend, Rohit, who is in a fabricated emergency situation requiring urgent financial help.",
-    4: "A casual, low-risk conversation between Aruna and her brother, Ravi, catching up and making plans to meet.",
-    5: "A romance scam scenario where a scammer uses a cloned voice of an online partner to manipulate the victim into sending money for a travel ticket.",
-    6: "A standard, legitimate service call for ordering a pizza. This call serves as a baseline for normal, low-risk interactions.",
-    7: "A targeted spear-phishing attempt where a scammer impersonates a known vendor to intercept a large payment by providing fake bank details.",
-    8: "A warm, personal call between Aruna and her mother, Sunita. This is another example of a safe, low-risk conversation."
 };
 
 const renderTranscript = (transcript: string, contact: string) => {

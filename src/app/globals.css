@@ -4,17 +4,17 @@
 
 @layer base {
   :root {
-    --background: 217 49% 11%; /* Deep Space Blue */
-    --foreground: 0 0% 100%; /* Neon White */
+    --background: 222 84% 5%; /* Very Dark Blue */
+    --foreground: 0 0% 100%; /* White */
 
-    --card: 217 49% 11%;
+    --card: 222 84% 5%;
     --card-foreground: 0 0% 100%;
 
-    --popover: 217 49% 11%;
+    --popover: 222 84% 5%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 185 100% 50%; /* Cyan Accent / Teal Glow */
-    --primary-foreground: 217 49% 11%;
+    --primary: 357 88% 51%; /* Marvel Red */
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 217 30% 20%;
     --secondary-foreground: 0 0% 100%;
@@ -22,28 +22,28 @@
     --muted: 217 30% 15%;
     --muted-foreground: 0 0% 70%;
 
-    --accent: 185 100% 50%; /* Cyan Accent */
-    --accent-foreground: 217 49% 11%;
+    --accent: 357 88% 51%; /* Marvel Red */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 343 100% 50%; /* Danger Red */
+    --destructive: 357 88% 51%; /* Marvel Red */
     --destructive-foreground: 0 0% 100%;
 
     --border: 217 30% 25%;
     --input: 217 30% 25%;
-    --ring: 185 100% 50%;
+    --ring: 357 88% 51%; /* Marvel Red */
 
     --radius: 0.5rem;
 
     /* Custom Colors from Style Guide */
-    --color-deep-space-blue: 217 49% 11%;
+    --color-deep-space-blue: 222 84% 5%;
     --color-teal-glow: 182 100% 50%;
     --color-cyan-accent: 185 100% 50%;
     
     --color-risk-safe: 154 100% 50%; /* #00FF88 */
     --color-risk-caution: 51 100% 50%; /* #FFD700 */
-    --color-risk-danger: 343 100% 48%; /* #FF0048 */
+    --color-risk-danger: 357 88% 51%; /* Marvel Red */
 
-    --color-marvel-red: 357 93% 46%; /* #E50914 */
+    --color-marvel-red: 357 88% 51%;
     --color-marvel-blue: 185 100% 53%; /* #0AEFFF */
     --color-holographic-gold: 51 100% 50%; /* #FFD700 */
     --color-dark-navy: 220 44% 8%; /* #09141F */
@@ -51,25 +51,25 @@
   }
 
   .dark {
-    --background: 217 49% 11%;
+    --background: 222 84% 5%;
     --foreground: 0 0% 100%;
-    --card: 217 49% 11%;
+    --card: 222 84% 5%;
     --card-foreground: 0 0% 100%;
-    --popover: 217 49% 11%;
+    --popover: 222 84% 5%;
     --popover-foreground: 0 0% 100%;
-    --primary: 185 100% 50%;
-    --primary-foreground: 217 49% 11%;
+    --primary: 357 88% 51%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 217 30% 20%;
     --secondary-foreground: 0 0% 100%;
     --muted: 217 30% 15%;
     --muted-foreground: 0 0% 70%;
-    --accent: 185 100% 50%;
-    --accent-foreground: 217 49% 11%;
-    --destructive: 343 100% 48%;
+    --accent: 357 88% 51%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 357 88% 51%;
     --destructive-foreground: 0 0% 100%;
     --border: 217 30% 25%;
     --input: 217 30% 25%;
-    --ring: 185 100% 50%;
+    --ring: 357 88% 51%;
   }
 }
 
@@ -80,7 +80,7 @@
   body {
     @apply bg-background text-foreground;
     background-color: hsl(var(--color-deep-space-blue));
-    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--color-teal-glow) / 0.3), transparent);
+    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--color-primary) / 0.3), transparent);
     animation: slow-gradient-shift 10s ease-in-out infinite;
   }
 
@@ -99,7 +99,7 @@
   }
 
   .glassmorphic-card {
-     @apply bg-black/20 backdrop-blur-lg border border-cyan-400/20 shadow-cyan-400/10 shadow-lg rounded-lg;
+     @apply bg-black/20 backdrop-blur-lg border-primary/20 shadow-primary/10 shadow-lg rounded-lg;
   }
 
   .text-glow-cyan {
@@ -158,13 +158,13 @@
 
 @keyframes slow-gradient-shift {
   0% {
-    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--color-teal-glow) / 0.3), transparent);
+    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--primary) / 0.3), transparent);
   }
   50% {
     background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--color-cyan-accent) / 0.4), transparent);
   }
   100% {
-    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--color-teal-glow) / 0.3), transparent);
+    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--primary) / 0.3), transparent);
   }
 }
 
@@ -182,7 +182,7 @@
 @keyframes screen-swipe-in {
   from {
     clip-path: inset(0 100% 0 0);
-    text-shadow: 0 0 20px hsl(var(--color-teal-glow));
+    text-shadow: 0 0 20px hsl(var(--color-primary));
   }
   to {
     clip-path: inset(0 0 0 0);

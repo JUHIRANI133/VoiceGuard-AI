@@ -21,8 +21,8 @@ const buttonVariants = cva(
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
-        glass: 'glassmorphic border-marvel-blue text-marvel-blue hover:shadow-[0_0_15px_hsl(var(--color-marvel-blue))] hover:border-marvel-blue/80 hover:text-white',
-        glassRed: 'glassmorphic border-marvel-red text-marvel-red hover:shadow-[0_0_15px_hsl(var(--color-marvel-red))] hover:border-marvel-red/80 hover:text-white'
+        glass: 'glassmorphic border-primary text-primary hover:shadow-[0_0_15px_hsl(var(--primary))] hover:border-primary/80 hover:text-white',
+        glassRed: 'glassmorphic border-destructive text-destructive hover:shadow-[0_0_15px_hsl(var(--destructive))] hover:border-destructive/80 hover:text-white'
       },
       size: {
         default: 'h-10 px-4 py-2',

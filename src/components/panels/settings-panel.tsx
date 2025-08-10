@@ -24,7 +24,7 @@ export default function SettingsPanel() {
 
       <Accordion type="single" collapsible className="w-full space-y-6">
         <AccordionItem value="item-1" className="border-none">
-           <Card className="bg-dark-navy/80 border-cyan-400/20">
+           <Card className="bg-background/50 border-primary/20">
             <AccordionTrigger className="p-6 hover:no-underline">
               <CardHeader className="p-0 text-left">
                 <CardTitle className="flex items-center gap-2"><Shield className="text-primary"/> Protection & Privacy</CardTitle>
@@ -59,7 +59,7 @@ export default function SettingsPanel() {
         </AccordionItem>
         
         <AccordionItem value="item-2" className="border-none">
-          <Card className="bg-dark-navy/80 border-cyan-400/20">
+          <Card className="bg-background/50 border-primary/20">
             <AccordionTrigger className="p-6 hover:no-underline">
               <CardHeader className="p-0 text-left">
                 <CardTitle className="flex items-center gap-2"><Bell className="text-primary"/> Alerts & Language</CardTitle>

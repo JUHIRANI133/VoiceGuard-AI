@@ -65,19 +65,20 @@ export default function KnowledgeHubPanel() {
             key={index} 
             onMouseEnter={() => setActiveCard(index)}
             onMouseLeave={() => setActiveCard(null)}
-            className="glassmorphic-card holographic-noise shine-sweep flex flex-col justify-between hover:border-marvel-red/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+            className="glassmorphic-card holographic-noise shine-sweep flex flex-col justify-between hover:border-primary/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
           >
             <CardHeader>
               <div className="flex items-center gap-4">
-                <article.icon className="w-8 h-8 text-marvel-red" />
+                <article.icon className="w-8 h-8 text-primary" />
                 <CardTitle className="text-lg text-glow-cyan">{article.title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground text-sm">{article.description}</p>
+
             </CardContent>
             <CardFooter>
-              <p className="text-xs font-medium text-marvel-red/80">{article.category}</p>
+              <p className="text-xs font-medium text-primary/80">{article.category}</p>
             </CardFooter>
           </Card>
         ))}

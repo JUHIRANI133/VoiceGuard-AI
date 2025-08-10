@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "../ui/button";
+import { Button } from "../button";
 import { FileText, Share2, AlertTriangle, ShieldCheck, HelpCircle } from "lucide-react";
 import type { RiskLevel } from "@/types";
 import { useState } from "react";
@@ -35,7 +35,7 @@ const RiskBadge = ({ risk }: { risk: RiskLevel }) => {
     medium: <HelpCircle className="w-3 h-3 mr-1" />,
     low: <ShieldCheck className="w-3 h-3 mr-1" />,
   }
-  return <Badge variant="outline" className={badgeStyles[risk]}>{icon[risk]} {risk.charAt(0).toUpperCase() + risk.slice(1)}</Badge>;
+  return <Badge variant="outline" className={cn("border", badgeStyles[risk])}>{icon[risk]} {risk.charAt(0).toUpperCase() + risk.slice(1)}</Badge>;
 };
 
 const ReportCard = ({ report, onBack }: { report: typeof mockReports[0], onBack: () => void }) => (
@@ -58,29 +58,18 @@ const ReportCard = ({ report, onBack }: { report: typeof mockReports[0], onBack:
 );
 
 export default function IncidentReportsPanel() {
-  const [flippedCard, setFlippedCard] = useState<number | null>(null);
+  const [selectedReport, setSelectedReport] = useState<typeof mockReports[0] | null>(null);
 
-  const handleFlip = (index: number) => {
-      setFlippedCard(index);
-  }
+  const handleSelectReport = (report: typeof mockReports[0]) => {
+    setSelectedReport(report);
+  };
 
-  const handleUnflip = () => {
-      setFlippedCard(null);
-  }
+  const handleBack = () => {
+    setSelectedReport(null);
+  };
 
-  if (flippedCard !== null) {
-      return (
-          <div className="h-full [perspective:1000px]">
-              <div className="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d] [transform:rotateY(180deg)]">
-                  <div className="absolute h-full w-full [backface-visibility:hidden]">
-                      {/* This would be the front, but we don't need it */}
-                  </div>
-                  <div className="h-full w-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                      <ReportCard report={mockReports[flippedCard]} onBack={handleUnflip} />
-                  </div>
-              </div>
-          </div>
-      )
+  if (selectedReport) {
+    return <ReportCard report={selectedReport} onBack={handleBack} />;
   }
 
   return (
@@ -90,7 +79,7 @@ export default function IncidentReportsPanel() {
             <h1 className="text-3xl font-bold tracking-tighter">Incident Report Center</h1>
             <p className="text-muted-foreground">Review flagged calls and suspicious activity.</p>
           </div>
-          <Button variant="glass" className="border-marvel-blue text-marvel-blue">
+          <Button variant="glass" className="border-primary text-primary">
             <Share2 className="w-4 h-4 mr-2" />
             Export All
           </Button>
@@ -113,7 +102,7 @@ export default function IncidentReportsPanel() {
                 </TableHeader>
                 <TableBody>
                 {mockReports.map((report, index) => (
-                    <TableRow key={index} className="glassmorphic-row border-b-white/10 hover:bg-cyan-400/10">
+                    <TableRow key={index} className="glassmorphic-row border-b-white/10 hover:bg-primary/10">
                     <TableCell>{report.date}</TableCell>
                     <TableCell>{report.caller}</TableCell>
                     <TableCell>{report.number}</TableCell>
@@ -121,7 +110,7 @@ export default function IncidentReportsPanel() {
                     <TableCell>{report.type}</TableCell>
                     <TableCell>{report.verification}</TableCell>
                     <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={() => handleFlip(index)}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSelectReport(report)}>
                             <FileText className="w-4 h-4 mr-2"/>
                             Details
                         </Button>

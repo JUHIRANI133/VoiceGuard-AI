@@ -3,13 +3,7 @@
 
 import React, { createContext, useState, useRef, useCallback } from 'react';
 import type { AppState, AppContextType, UploadedFile, CallLog } from '@/types';
-import { initialCallHistory } from '@/lib/mock-data';
-
-const mockUploadedAudio: UploadedFile[] = [
-    { id: 1, name: 'meeting_recording_01.wav', duration: '15:30', transcript: 'This is a sample transcript for the first meeting recording...', isRenaming: false, audioDataUri: null },
-    { id: 2, name: 'voicemail_from_client.mp3', duration: '0:45', transcript: 'Hi, this is a voicemail from your client...', isRenaming: false, audioDataUri: null },
-    { id: 3, name: 'lecture_capture_comp-sci.mp3', duration: '45:12', transcript: 'Welcome to the computer science lecture. Today we will be discussing...', isRenaming: false, audioDataUri: null }
-];
+import { initialCallHistory, mockUploadedAudio } from '@/lib/mock-data';
 
 const initialState: AppState = {
   activePanel: 'home',
@@ -158,21 +152,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const audio = new Audio(audioDataUri);
       audio.onloadedmetadata = () => {
         const duration = audio.duration;
+        const newId = Date.now(); // Unique ID
+        const formattedDuration = `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}`;
+        const newTranscript = `(Transcript for ${file.name} would be generated via speech-to-text AI)`;
+
         const newCallLog: CallLog = {
-          id: state.callHistory.length + 1,
+          id: newId,
           type: 'Uploaded',
           contact: file.name,
-          duration: `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}`,
+          duration: formattedDuration,
           date: new Date().toISOString().split('T')[0],
-          risk: 'low',
-          emotion: 'Casual',
-          transcript: `(Transcript for ${file.name} would be generated here)`,
+          risk: 'low', // Default risk, should be analyzed
+          emotion: 'Casual', // Default emotion
+          transcript: newTranscript,
           audioDataUri,
         };
+        
+        const newUploadedFile: UploadedFile = {
+            id: newId,
+            name: file.name,
+            duration: formattedDuration,
+            transcript: newTranscript,
+            audioDataUri: audioDataUri,
+        }
 
         setState(prevState => ({
           ...prevState,
           callHistory: [newCallLog, ...prevState.callHistory],
+          uploadedFiles: [newUploadedFile, ...prevState.uploadedFiles],
         }));
       };
     };

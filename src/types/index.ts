@@ -25,7 +25,6 @@ export interface UploadedFile {
     name: string;
     duration: string;
     transcript: string;
-    isRenaming: boolean;
     audioDataUri: string | null;
 }
 

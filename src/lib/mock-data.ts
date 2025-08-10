@@ -1,5 +1,11 @@
 
-import type { CallLog } from '@/types';
+import type { CallLog, UploadedFile } from '@/types';
+
+export const mockUploadedAudio: UploadedFile[] = [
+    { id: 101, name: 'meeting_recording_01.wav', duration: '15:30', transcript: 'This is a sample transcript for the first meeting recording...', audioDataUri: null },
+    { id: 102, name: 'voicemail_from_client.mp3', duration: '0:45', transcript: 'Hi, this is a voicemail from your client...', audioDataUri: null },
+    { id: 103, name: 'lecture_capture_comp-sci.mp3', duration: '45:12', transcript: 'Welcome to the computer science lecture. Today we will be discussing...', audioDataUri: null }
+];
 
 export const initialCallHistory: CallLog[] = [
   { id: 1, type: 'Incoming', contact: 'Unknown', duration: '5:21', date: '2024-07-28', risk: 'high', emotion: 'Threatening', transcript: "Speaker1: Ma'am, I am calling from your bank's KYC department. Your account will be blocked if you do not update your PAN card details immediately. Speaker2: Oh my! But I just did this last month. Are you sure? Speaker1: Yes ma'am, it is a new RBI mandate. To avoid suspension, you must click the link I just sent you via SMS and enter your details. It is very urgent. Speaker2: A link via SMS? My bank always says never to click such links. This sounds suspicious. Speaker1: Ma'am, this is a secure portal! Your account will be frozen in 10 minutes if you don't comply. Do you want to lose access to all your money? Think of the trouble! Speaker2: My phone is giving me a scam alert... I am not comfortable with this. I will visit the branch tomorrow. Speaker1: There is no time for that! You must do it now! This is your final warning!", voice: 'algenib' },

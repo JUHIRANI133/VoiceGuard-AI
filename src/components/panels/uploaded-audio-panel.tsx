@@ -6,35 +6,27 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { FileAudio, Clock, Pencil, FileText, Check, X, Upload, PlayCircle, Loader, Volume2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { FileAudio, Clock, MoreHorizontal, Pencil, Trash2, FileText, Upload, PlayCircle, Volume2 } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { AppContext } from '@/contexts/app-context';
 import type { UploadedFile } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
 
 
 export default function UploadedAudioPanel() {
     const { uploadedFiles, setUploadedFiles, uploadAudioFile } = useContext(AppContext);
     const [transcriptToShow, setTranscriptToShow] = useState<string | null>(null);
+    const [fileToRename, setFileToRename] = useState<UploadedFile | null>(null);
     const [editingName, setEditingName] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { toast } = useToast();
     const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
     const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
+    const [currentAudioName, setCurrentAudioName] = useState<string>('');
 
-    const handleRenameClick = (audio: UploadedFile) => {
-        setUploadedFiles(uploadedFiles.map(a => a.id === audio.id ? { ...a, isRenaming: true } : { ...a, isRenaming: false }));
-        setEditingName(audio.name);
-    }
-    
-    const handleSaveRename = (id: number) => {
-        setUploadedFiles(uploadedFiles.map(a => a.id === id ? { ...a, name: editingName, isRenaming: false } : a));
-    }
-
-    const handleCancelRename = (id: number) => {
-        setUploadedFiles(uploadedFiles.map(a => a.id === id ? { ...a, isRenaming: false } : a));
-    }
 
     const handleShowTranscript = (transcript: string) => {
         setTranscriptToShow(transcript);
@@ -50,7 +42,7 @@ export default function UploadedAudioPanel() {
           uploadAudioFile(file);
           toast({
               title: "File Uploaded",
-              description: `${file.name} is being processed and will appear in the call history.`,
+              description: `${file.name} is being processed. It will appear here and in the call history.`,
           });
         }
     };
@@ -58,6 +50,7 @@ export default function UploadedAudioPanel() {
     const handlePlayAudio = (audio: UploadedFile) => {
         if(audio.audioDataUri) {
             setAudioDataUri(audio.audioDataUri);
+            setCurrentAudioName(audio.name);
             setIsAudioPlayerOpen(true);
         } else {
             toast({
@@ -67,6 +60,30 @@ export default function UploadedAudioPanel() {
             });
         }
     }
+    
+    const handleRenameClick = (audio: UploadedFile) => {
+        setFileToRename(audio);
+        setEditingName(audio.name);
+    }
+    
+    const handleSaveRename = () => {
+        if (!fileToRename) return;
+        setUploadedFiles(uploadedFiles.map(a => a.id === fileToRename.id ? { ...a, name: editingName } : a));
+        toast({
+            title: "File Renamed",
+            description: `Renamed to ${editingName}`
+        })
+        setFileToRename(null);
+    }
+
+    const handleDeleteFile = (id: number) => {
+        setUploadedFiles(uploadedFiles.filter(a => a.id !== id));
+         toast({
+            title: "File Deleted",
+            variant: "destructive"
+        })
+    }
+
 
   return (
     <>
@@ -98,42 +115,51 @@ export default function UploadedAudioPanel() {
                                 <TableRow key={audio.id}>
                                     <TableCell className="font-medium flex items-center gap-2">
                                         <FileAudio className="w-4 h-4 text-muted-foreground"/>
-                                        {audio.isRenaming ? (
-                                            <Input
-                                                value={editingName}
-                                                onChange={(e) => setEditingName(e.target.value)}
-                                                className="h-8"
-                                            />
-                                        ) : (
-                                            <span>{audio.name}</span>
-                                        )}
+                                        <span>{audio.name}</span>
                                     </TableCell>
                                     <TableCell className="flex items-center gap-2">
                                         <Clock className="w-4 h-4 text-muted-foreground"/> {audio.duration}
                                     </TableCell>
                                     <TableCell className="text-right space-x-2">
-                                        {audio.isRenaming ? (
-                                            <>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleSaveRename(audio.id)}>
-                                                    <Check className="text-green-500" />
+                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePlayAudio(audio)}>
+                                            <PlayCircle className="text-muted-foreground hover:text-primary" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleShowTranscript(audio.transcript)}>
+                                            <FileText className="text-muted-foreground hover:text-primary" />
+                                        </Button>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                    <MoreHorizontal className="text-muted-foreground" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCancelRename(audio.id)}>
-                                                    <X className="text-red-500" />
-                                                </Button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePlayAudio(audio)}>
-                                                    <PlayCircle className="text-muted-foreground hover:text-primary" />
-                                                </Button>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRenameClick(audio)}>
-                                                    <Pencil className="text-muted-foreground hover:text-primary" />
-                                                </Button>
-                                                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleShowTranscript(audio.transcript)}>
-                                                    <FileText className="text-muted-foreground hover:text-primary" />
-                                                </Button>
-                                            </>
-                                        )}
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="glassmorphic">
+                                                <DropdownMenuItem onClick={() => handleRenameClick(audio)}>
+                                                    <Pencil className="mr-2 h-4 w-4"/>
+                                                    <span>Rename</span>
+                                                </DropdownMenuItem>
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                                            <Trash2 className="mr-2 h-4 w-4 text-destructive"/>
+                                                            <span className="text-destructive">Delete</span>
+                                                        </DropdownMenuItem>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent className="glassmorphic-card">
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                This action cannot be undone. This will permanently delete the audio file.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handleDeleteFile(audio.id)} className="bg-destructive hover:bg-destructive/80">Delete</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -160,7 +186,7 @@ export default function UploadedAudioPanel() {
         <Dialog open={isAudioPlayerOpen} onOpenChange={setIsAudioPlayerOpen}>
             <DialogContent className="glassmorphic-card">
               <DialogHeader>
-                <DialogTitle>Playing Audio</DialogTitle>
+                <DialogTitle>Playing: {currentAudioName}</DialogTitle>
               </DialogHeader>
               <div className="flex items-center justify-center p-8">
                 {audioDataUri ? (
@@ -174,6 +200,28 @@ export default function UploadedAudioPanel() {
                   <p className="text-destructive">Could not load audio.</p>
                 )}
               </div>
+            </DialogContent>
+        </Dialog>
+        <Dialog open={!!fileToRename} onOpenChange={(isOpen) => !isOpen && setFileToRename(null)}>
+            <DialogContent className="glassmorphic-card">
+                <DialogHeader>
+                    <DialogTitle>Rename File</DialogTitle>
+                    <DialogDescription>
+                        Enter a new name for the file: {fileToRename?.name}
+                    </DialogDescription>
+                </DialogHeader>
+                <Input 
+                    value={editingName} 
+                    onChange={(e) => setEditingName(e.target.value)} 
+                    className="my-4"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveRename()}
+                />
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <Button onClick={handleSaveRename}>Save</Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     </>

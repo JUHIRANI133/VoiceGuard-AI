@@ -33,6 +33,16 @@ export default function HomePanel() {
     setIsAudioPlayerOpen(true);
     setAudioDataUri(null);
 
+    // Special case for the first call log to play the "uploaded" audio.
+    if (call.id === 1) {
+        // In a real app, this would point to the actual uploaded file's URL or data URI.
+        // For this mock, we'll use a placeholder and skip the API call.
+        const mockUploadedAudioUri = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAAAAA";
+        setAudioDataUri(mockUploadedAudioUri);
+        setIsLoadingAudio(false);
+        return;
+    }
+
     if (audioCache.current[call.id]) {
       setAudioDataUri(audioCache.current[call.id]);
       setIsLoadingAudio(false);
@@ -264,4 +274,6 @@ export default function HomePanel() {
   );
 
     
+    
+
     

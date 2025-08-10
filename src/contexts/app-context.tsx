@@ -31,7 +31,7 @@ export const AppContext = createContext<AppContextType>({
 });
 
 const mockTranscription = [
-  "Namaste, is this Mrs. Sharma?",
+  "Namaste, is this Aruna Mehta?",
   "Yes, speaking. Who is this?",
   "Ma'am, I am calling from your bank's KYC department. Your account will be blocked if you do not update your PAN card details immediately.",
   "Oh my! But I just did this last month. Are you sure?",

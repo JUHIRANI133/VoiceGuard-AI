@@ -4,50 +4,47 @@
 
 @layer base {
   :root {
-    --background: 222 84% 5%; /* Very Dark Blue */
-    --foreground: 0 0% 100%; /* White */
+    --background: 250 60% 98%; /* Pastel Lavender Light */
+    --foreground: 240 10% 3.9%; /* Dark Gray for text */
 
-    --card: 222 84% 5%;
-    --card-foreground: 0 0% 100%;
+    --card: 250 60% 98%;
+    --card-foreground: 240 10% 3.9%;
 
-    --popover: 222 84% 5%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 250 60% 98%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 357 88% 51%; /* Marvel Red */
+    --primary: 357 91% 50%; /* Marvel Red */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 30% 20%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 217 30% 15%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 357 88% 51%; /* Marvel Red */
+    --accent: 357 91% 50%; /* Marvel Red */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 357 88% 51%; /* Marvel Red */
+    --destructive: 357 91% 50%; /* Marvel Red */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 30% 25%;
-    --input: 217 30% 25%;
-    --ring: 357 88% 51%; /* Marvel Red */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 357 91% 50%; /* Marvel Red */
 
     --radius: 0.5rem;
 
     /* Custom Colors from Style Guide */
-    --color-deep-space-blue: 222 84% 5%;
-    --color-teal-glow: 182 100% 50%;
+    --color-pastel-lavender-light: 250 60% 98%;
+    --color-pastel-lavender-dark: 250 40% 92%;
     --color-cyan-accent: 185 100% 50%;
     
     --color-risk-safe: 154 100% 50%; /* #00FF88 */
     --color-risk-caution: 51 100% 50%; /* #FFD700 */
-    --color-risk-danger: 357 88% 51%; /* Marvel Red */
+    --color-risk-danger: 357 91% 50%; /* Marvel Red */
 
-    --color-marvel-red: 357 88% 51%;
+    --color-marvel-red: 357 91% 50%;
     --color-marvel-blue: 185 100% 53%; /* #0AEFFF */
-    --color-holographic-gold: 51 100% 50%; /* #FFD700 */
-    --color-dark-navy: 220 44% 8%; /* #09141F */
-    --color-dark-crimson: 355 100% 5%; /* #1A0006 */
   }
 
   .dark {
@@ -57,19 +54,19 @@
     --card-foreground: 0 0% 100%;
     --popover: 222 84% 5%;
     --popover-foreground: 0 0% 100%;
-    --primary: 357 88% 51%;
+    --primary: 357 91% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 217 30% 20%;
     --secondary-foreground: 0 0% 100%;
     --muted: 217 30% 15%;
     --muted-foreground: 0 0% 70%;
-    --accent: 357 88% 51%;
+    --accent: 357 91% 50%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 357 88% 51%;
+    --destructive: 357 91% 50%;
     --destructive-foreground: 0 0% 100%;
     --border: 217 30% 25%;
     --input: 217 30% 25%;
-    --ring: 357 88% 51%;
+    --ring: 357 91% 50%;
   }
 }
 
@@ -79,9 +76,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: hsl(var(--color-deep-space-blue));
-    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsl(var(--color-primary) / 0.3), transparent);
-    animation: slow-gradient-shift 10s ease-in-out infinite;
+    background: linear-gradient(135deg, hsl(var(--color-pastel-lavender-light)) 0%, hsl(var(--color-pastel-lavender-dark)) 100%);
+    animation: none; /* Removing previous animation */
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -89,21 +85,22 @@
   }
 
   h1,h2,h3 {
-    @apply text-glow-cyan;
+    @apply text-primary;
   }
 }
 
 @layer utilities {
   .glassmorphic {
-    @apply bg-white/5 backdrop-blur-sm border border-white/10;
+    @apply bg-white/20 backdrop-blur-md border border-white/30;
   }
 
   .glassmorphic-card {
-     @apply bg-black/20 backdrop-blur-lg border-primary/20 shadow-primary/10 shadow-lg rounded-lg;
+     @apply bg-white/30 backdrop-blur-lg border-primary/20 shadow-primary/10 shadow-lg rounded-lg;
   }
 
   .text-glow-cyan {
-    text-shadow: 0 0 5px hsl(var(--color-cyan-accent) / 0.8), 0 0 15px hsl(var(--color-cyan-accent) / 0.5);
+    color: hsl(var(--primary));
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.5);
   }
   
   .holographic-noise {
@@ -119,7 +116,7 @@
     width: 100%;
     height: 100%;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><filter id="n" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
-    opacity: 0.05;
+    opacity: 0.03;
     pointer-events: none;
     animation: holographic-move 10s linear infinite;
   }
@@ -131,7 +128,7 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
     transform: rotate(20deg);
     animation: shine-animation 5s infinite linear;
     pointer-events: none;

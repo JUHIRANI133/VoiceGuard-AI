@@ -6,7 +6,7 @@ import { Button } from "@/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Mic, Upload, Phone, Clock, AlertTriangle, CheckCircle, PlayCircle, Loader, Volume2, FileText, X } from 'lucide-react';
 import { generateSpeech } from '@/ai/flows/text-to-speech';
 import { ScrollArea } from '../ui/scroll-area';
@@ -49,7 +49,7 @@ export default function HomePanel() {
     setIsLoadingAudio(true);
     try {
       const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice || 'algenib' });
-      audioCache.current[call.id] = audioDataUri;
+      audioCache.current[call.id as string] = audioDataUri;
       setAudioDataUri(audioDataUri);
     } catch (error) {
       console.error("Failed to generate speech:", error);
@@ -77,10 +77,7 @@ export default function HomePanel() {
     const file = event.target.files?.[0];
     if (file) {
       uploadAudioFile(file);
-      toast({
-          title: "File Uploaded",
-          description: `${file.name} is being processed and will appear in the call history.`,
-      });
+      event.target.value = '';
     }
   };
 
@@ -218,7 +215,7 @@ export default function HomePanel() {
             ) : audioDataUri ? (
                 <div className="flex flex-col items-center gap-4">
                     <Volume2 className="w-12 h-12 text-primary" />
-                    <audio src={audioDataUri} controls autoPlay onEnded={() => setIsAudioPlayerOpen(false)}>
+                    <audio src={audioDataUri} controls autoPlay onEnded={() => setIsAudioPlayerOpen(false)} className="w-full">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -270,9 +267,3 @@ export default function HomePanel() {
   );
 
     
-    
-
-    
-
-    
-

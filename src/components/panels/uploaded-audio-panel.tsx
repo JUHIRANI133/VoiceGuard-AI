@@ -2,12 +2,12 @@
 "use client";
 
 import { useState, useContext, useRef } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { FileAudio, Clock, MoreHorizontal, Pencil, Trash2, FileText, Upload, PlayCircle, Volume2 } from 'lucide-react';
+import { FileAudio, Clock, MoreHorizontal, Pencil, Trash2, FileText, Upload, PlayCircle, Volume2, Inbox } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { AppContext } from '@/contexts/app-context';
 import type { UploadedFile } from '@/types';
@@ -40,6 +40,8 @@ export default function UploadedAudioPanel() {
         const file = event.target.files?.[0];
         if (file) {
           uploadAudioFile(file);
+          // Clear the input value so the same file can be uploaded again
+          event.target.value = '';
         }
     };
 
@@ -63,31 +65,32 @@ export default function UploadedAudioPanel() {
     }
     
     const handleSaveRename = () => {
-        if (!fileToRename) return;
-        updateUploadedFile(fileToRename.id, editingName)
+        if (!fileToRename || !editingName.trim()) {
+            toast({ title: "Invalid Name", description: "File name cannot be empty.", variant: "destructive" });
+            return
+        };
+        updateUploadedFile(fileToRename.id, editingName.trim())
         setFileToRename(null);
     }
-
-    const handleDeleteFile = (id: string) => {
-        deleteUploadedFile(id);
-    }
-
 
   return (
     <>
         <div className="h-full flex flex-col gap-6 animate-text-fade-in">
             <div>
                 <h1 className="text-3xl font-bold tracking-tighter">Uploaded Audio</h1>
-                <p className="text-muted-foreground">Manage and analyze your uploaded audio files from the database.</p>
+                <p className="text-muted-foreground">Manage and analyze your uploaded audio files.</p>
             </div>
             <Card className="glassmorphic-card holographic-noise flex-grow flex flex-col">
                 <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>My Audio Files</CardTitle>
-                    <Button variant="outline" className="glassmorphic border-primary text-primary" onClick={handleUploadClick}>
+                    <div>
+                        <CardTitle>My Audio Files</CardTitle>
+                        <CardDescription>Audio files you have uploaded for analysis.</CardDescription>
+                    </div>
+                    <Button variant="outline" className="glassmorphic border-primary text-primary hover:text-white" onClick={handleUploadClick}>
                         <Upload className="mr-2 h-4 w-4"/>
                         Upload New File
                     </Button>
-                    <Input type="file" ref={fileInputRef} onChange={handleFileChange} accept="audio/*" className="hidden" />
+                    <Input type="file" ref={fileInputRef} onChange={handleFileChange} accept="audio/mp3, audio/wav, audio/mpeg, audio/m4a" className="hidden" />
                 </CardHeader>
                 <CardContent className="flex-grow">
                     <Table>
@@ -99,11 +102,11 @@ export default function UploadedAudioPanel() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {uploadedFiles.map((audio) => (
+                            {uploadedFiles.length > 0 ? uploadedFiles.map((audio) => (
                                 <TableRow key={audio.id}>
                                     <TableCell className="font-medium flex items-center gap-2">
                                         <FileAudio className="w-4 h-4 text-muted-foreground"/>
-                                        <span>{audio.name}</span>
+                                        <span className="truncate max-w-xs">{audio.name}</span>
                                     </TableCell>
                                     <TableCell className="flex items-center gap-2">
                                         <Clock className="w-4 h-4 text-muted-foreground"/> {audio.duration}
@@ -128,21 +131,21 @@ export default function UploadedAudioPanel() {
                                                 </DropdownMenuItem>
                                                 <AlertDialog>
                                                     <AlertDialogTrigger asChild>
-                                                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                                            <Trash2 className="mr-2 h-4 w-4 text-destructive"/>
-                                                            <span className="text-destructive">Delete</span>
+                                                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                                                            <Trash2 className="mr-2 h-4 w-4"/>
+                                                            <span>Delete</span>
                                                         </DropdownMenuItem>
                                                     </AlertDialogTrigger>
                                                     <AlertDialogContent className="glassmorphic-card">
                                                         <AlertDialogHeader>
                                                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                                             <AlertDialogDescription>
-                                                                This action cannot be undone. This will permanently delete the audio file from the database.
+                                                                This action cannot be undone. This will permanently delete "{audio.name}" from the database and storage.
                                                             </AlertDialogDescription>
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
                                                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction onClick={() => handleDeleteFile(audio.id)} className="bg-destructive hover:bg-destructive/80">Delete</AlertDialogAction>
+                                                            <AlertDialogAction onClick={() => deleteUploadedFile(audio.id)} className="bg-destructive hover:bg-destructive/80">Delete</AlertDialogAction>
                                                         </AlertDialogFooter>
                                                     </AlertDialogContent>
                                                 </AlertDialog>
@@ -150,7 +153,17 @@ export default function UploadedAudioPanel() {
                                         </DropdownMenu>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="h-24 text-center">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Inbox className="w-10 h-10 text-muted-foreground"/>
+                                            <h3 className="text-lg font-semibold">No audio files found</h3>
+                                            <p className="text-muted-foreground">Click "Upload New File" to get started.</p>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -174,13 +187,13 @@ export default function UploadedAudioPanel() {
         <Dialog open={isAudioPlayerOpen} onOpenChange={setIsAudioPlayerOpen}>
             <DialogContent className="glassmorphic-card">
               <DialogHeader>
-                <DialogTitle>Playing: {currentAudioName}</DialogTitle>
+                <DialogTitle className="truncate max-w-full">Playing: {currentAudioName}</DialogTitle>
               </DialogHeader>
               <div className="flex items-center justify-center p-8">
                 {audioDataUri ? (
                     <div className="flex flex-col items-center gap-4">
                         <Volume2 className="w-12 h-12 text-primary" />
-                        <audio src={audioDataUri} controls autoPlay onEnded={() => setIsAudioPlayerOpen(false)}>
+                        <audio src={audioDataUri} controls autoPlay onEnded={() => setIsAudioPlayerOpen(false)} className="w-full">
                             Your browser does not support the audio element.
                         </audio>
                     </div>
@@ -195,7 +208,7 @@ export default function UploadedAudioPanel() {
                 <DialogHeader>
                     <DialogTitle>Rename File</DialogTitle>
                     <DialogDescription>
-                        Enter a new name for the file: {fileToRename?.name}
+                        Enter a new name for the file: "{fileToRename?.name}"
                     </DialogDescription>
                 </DialogHeader>
                 <Input 
@@ -206,7 +219,7 @@ export default function UploadedAudioPanel() {
                 />
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button type="button" variant="secondary">Cancel</Button>
+                        <Button type="button" variant="ghost">Cancel</Button>
                     </DialogClose>
                     <Button onClick={handleSaveRename}>Save</Button>
                 </DialogFooter>
@@ -215,3 +228,5 @@ export default function UploadedAudioPanel() {
     </>
   );
 }
+
+    

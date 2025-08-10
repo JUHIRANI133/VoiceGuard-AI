@@ -35,6 +35,7 @@ export interface UploadedFile {
     duration: string;
     transcript: string;
     audioDataUri: string | null;
+    storagePath: string;
 }
 
 export interface CallLog {
@@ -70,9 +71,7 @@ export interface AppContextType extends AppState {
     setActivePanel: (panel: Panel) => void;
     startMockCall: () => void;
     endCall: () => void;
-    uploadAudioFile: (file: File) => void;
-    setUploadedFiles: (files: UploadedFile[]) => void;
-    setCallHistory: (callHistory: CallLog[]) => void;
+    uploadAudioFile: (file: File) => Promise<void>;
     updateUploadedFile: (id: string, newName: string) => Promise<void>;
     deleteUploadedFile: (id: string) => Promise<void>;
     addEmergencyContact: (contact: Omit<EmergencyContact, 'id'>) => void;
@@ -84,3 +83,5 @@ export interface AppContextType extends AppState {
     t: (key: keyof typeof import('@/lib/i18n').translations.en) => string;
     setSendGpsToEmergencyContacts: (enabled: boolean) => void;
 }
+
+    

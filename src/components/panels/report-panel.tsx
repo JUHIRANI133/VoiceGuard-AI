@@ -12,15 +12,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { subDays, format } from 'date-fns';
 
 
-const chartConfig = {
-  high: { label: "High Risk", color: "hsl(var(--color-risk-danger))" },
-  medium: { label: "Medium Risk", color: "hsl(var(--color-risk-caution))" },
-  low: { label: "Low Risk", color: "hsl(var(--color-risk-safe))" },
-};
-
 export default function ReportPanel() {
-    const { callHistory } = useContext(AppContext);
+    const { callHistory, t } = useContext(AppContext);
     const [timeframe, setTimeframe] = useState<'week' | 'month' | 'year'>('month');
+
+    const chartConfig = useMemo(() => ({
+      high: { label: t('riskHigh'), color: "hsl(var(--color-risk-danger))" },
+      medium: { label: t('riskMedium'), color: "hsl(var(--color-risk-caution))" },
+      low: { label: t('riskLow'), color: "hsl(var(--color-risk-safe))" },
+    }), [t]);
 
     const riskData = useMemo(() => {
         const now = new Date();
@@ -86,41 +86,41 @@ export default function ReportPanel() {
             <CardHeader className="text-center space-y-2 pb-4">
                  <div className="inline-flex items-center justify-center gap-2 text-2xl font-bold text-glow-cyan">
                     <ShieldCheck className="w-8 h-8"/>
-                    <h1>VoiceGuard AI</h1>
+                    <h1>{t('aboutTitle')}</h1>
                  </div>
-                 <p className="text-muted-foreground">Your guardian against digital deception</p>
+                 <p className="text-muted-foreground">{t('aboutSubtitle')}</p>
             </CardHeader>
             <Separator/>
             <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
                         <section>
-                            <h2 className="text-xl font-bold text-primary mb-2">Executive Summary</h2>
+                            <h2 className="text-xl font-bold text-primary mb-2">{t('aboutExecSummaryTitle')}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                VoiceGuard AI is a sophisticated, multilingual security application designed to protect users from real-time phone scams and digital deception. Built with a modern Next.js and Firebase stack, the app offers a comprehensive suite of features centered around a futuristic, intuitive dashboard, providing users with unparalleled protection and peace of mind.
+                                {t('aboutExecSummaryContent')}
                             </p>
                         </section>
                          <section>
-                            <h2 className="text-xl font-bold text-primary mb-2 flex items-center gap-2"><Cpu className="w-5 h-5"/> Key Features</h2>
+                            <h2 className="text-xl font-bold text-primary mb-2 flex items-center gap-2"><Cpu className="w-5 h-5"/> {t('aboutKeyFeaturesTitle')}</h2>
                             <ul className="list-disc list-inside text-muted-foreground space-y-2">
-                                <li><strong>Live Call Analysis:</strong> Real-time transcription, scam pattern detection, and risk assessment.</li>
-                                <li><strong>AI-Powered Detection:</strong> Utilizes Genkit AI for emotional manipulation and synthetic voice identification.</li>
-                                <li><strong>Multilingual Support:</strong> Interface and analysis available in English, Hindi, Spanish, and French.</li>
-                                <li><strong>User-Centric Dashboard:</strong> Centralized hub for call history, emotional tracking, and scam case files.</li>
-                                <li><strong>Prevention Suite:</strong> Advanced settings including live GPS sharing and emergency contact alerts.</li>
-                                <li><strong>Secure & Scalable:</strong> Built on Firebase for robust data management and cloud functions.</li>
+                                <li>{t('aboutKeyFeaturesItem1')}</li>
+                                <li>{t('aboutKeyFeaturesItem2')}</li>
+                                <li>{t('aboutKeyFeaturesItem3')}</li>
+                                <li>{t('aboutKeyFeaturesItem4')}</li>
+                                <li>{t('aboutKeyFeaturesItem5')}</li>
+                                <li>{t('aboutKeyFeaturesItem6')}</li>
                             </ul>
                         </section>
                     </div>
                     <div className="space-y-6">
                        <section>
                             <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-bold text-primary flex items-center gap-2"><BarChart className="w-5 h-5"/> Risk Analysis Trend</h2>
+                                <h2 className="text-xl font-bold text-primary flex items-center gap-2"><BarChart className="w-5 h-5"/> {t('aboutRiskAnalysisTitle')}</h2>
                                 <Tabs value={timeframe} onValueChange={(value) => setTimeframe(value as any)} className="w-auto">
                                     <TabsList className="glassmorphic p-1 h-auto">
-                                        <TabsTrigger value="week" className="px-3 py-1 text-xs">Week</TabsTrigger>
-                                        <TabsTrigger value="month" className="px-3 py-1 text-xs">Month</TabsTrigger>
-                                        <TabsTrigger value="year" className="px-3 py-1 text-xs">Year</TabsTrigger>
+                                        <TabsTrigger value="week" className="px-3 py-1 text-xs">{t('aboutRiskAnalysisWeek')}</TabsTrigger>
+                                        <TabsTrigger value="month" className="px-3 py-1 text-xs">{t('aboutRiskAnalysisMonth')}</TabsTrigger>
+                                        <TabsTrigger value="year" className="px-3 py-1 text-xs">{t('aboutRiskAnalysisYear')}</TabsTrigger>
                                     </TabsList>
                                 </Tabs>
                             </div>
@@ -133,16 +133,16 @@ export default function ReportPanel() {
                                             <YAxis />
                                             <ChartTooltip content={<ChartTooltipContent />} />
                                             <Legend />
-                                            <Bar dataKey="low" stackId="a" fill="var(--color-low)" radius={[0, 0, 4, 4]} name="Low Risk"/>
-                                            <Bar dataKey="medium" stackId="a" fill="var(--color-medium)" radius={[0, 0, 4, 4]} name="Medium Risk" />
-                                            <Bar dataKey="high" stackId="a" fill="var(--color-high)" radius={[4, 4, 0, 0]} name="High Risk"/>
+                                            <Bar dataKey="low" stackId="a" fill="var(--color-low)" radius={[0, 0, 4, 4]} name={chartConfig.low.label}/>
+                                            <Bar dataKey="medium" stackId="a" fill="var(--color-medium)" radius={[0, 0, 4, 4]} name={chartConfig.medium.label} />
+                                            <Bar dataKey="high" stackId="a" fill="var(--color-high)" radius={[4, 4, 0, 0]} name={chartConfig.high.label}/>
                                         </RechartsBarChart>
                                     </ChartContainer>
                                 </CardContent>
                             </Card>
                         </section>
                          <section>
-                            <h2 className="text-xl font-bold text-primary mb-2">Technical Stack</h2>
+                            <h2 className="text-xl font-bold text-primary mb-2">{t('aboutTechStackTitle')}</h2>
                             <div className="grid grid-cols-2 gap-4 text-muted-foreground">
                                 <div className="flex items-center gap-2"><Cpu className="text-primary w-5 h-5"/>Next.js & React</div>
                                 <div className="flex items-center gap-2"><Database className="text-primary w-5 h-5"/>Firebase & Firestore</div>
@@ -155,9 +155,9 @@ export default function ReportPanel() {
                 </div>
                  <Separator className="my-6"/>
                  <section className="text-center">
-                    <h2 className="text-xl font-bold text-primary mb-2">Conclusion</h2>
+                    <h2 className="text-xl font-bold text-primary mb-2">{t('aboutConclusionTitle')}</h2>
                     <p className="text-muted-foreground max-w-3xl mx-auto">
-                        VoiceGuard AI stands as a testament to the power of modern web technologies and artificial intelligence in solving real-world problems. Its robust feature set and user-friendly design make it an indispensable tool in the fight against digital fraud, setting a new standard for personal security applications.
+                        {t('aboutConclusionContent')}
                     </p>
                 </section>
             </CardContent>

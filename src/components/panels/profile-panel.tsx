@@ -30,9 +30,9 @@ export default function ProfilePanel() {
                     </Avatar>
                     <div className="flex-1">
                     <h2 className="text-2xl font-bold text-glow-cyan">Aruna Mehta</h2>
-                     <p className="text-muted-foreground">
+                     <div className="text-muted-foreground">
                         <Badge variant="outline" className="border-primary/50 text-primary">Premium User</Badge>
-                     </p>
+                     </div>
                     <div className="mt-2 flex items-center justify-center md:justify-start gap-4 text-sm">
                         <div className="flex items-center gap-2">
                             <Briefcase className="w-4 h-4 text-primary" />

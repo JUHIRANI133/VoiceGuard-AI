@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Mic, Upload, Phone, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Mic, Upload, Phone, Clock, AlertTriangle, CheckCircle, PlayCircle } from 'lucide-react';
 
 // Mock data for call history
 const callHistory = [
@@ -13,6 +13,10 @@ const callHistory = [
   { id: 2, type: 'Outgoing', contact: 'Aanya Sharma', duration: '12:45', date: '2024-07-28', risk: 'low' },
   { id: 3, type: 'Incoming', contact: 'Unknown', duration: '2:03', date: '2024-07-27', risk: 'medium' },
   { id: 4, type: 'Incoming', contact: 'Aditya Verma', duration: '8:11', date: '2024-07-26', risk: 'low' },
+  { id: 5, type: 'Outgoing', contact: 'Priya Singh (Mom)', duration: '22:30', date: '2024-07-26', risk: 'low' },
+  { id: 6, type: 'Incoming', contact: 'Pizza Delivery', duration: '1:15', date: '2024-07-25', risk: 'low' },
+  { id: 7, type: 'Incoming', contact: 'Spam Caller', duration: '0:35', date: '2024-07-25', risk: 'high' },
+  { id: 8, type: 'Outgoing', contact: 'Vikram Reddy', duration: '7:55', date: '2024-07-24', risk: 'low' },
 ];
 
 export default function HomePanel() {
@@ -87,6 +91,7 @@ export default function HomePanel() {
                 <TableHead>Contact</TableHead>
                 <TableHead>Duration</TableHead>
                 <TableHead>Date</TableHead>
+                <TableHead>Audio</TableHead>
                 <TableHead className="text-right">Risk Level</TableHead>
               </TableRow>
             </TableHeader>
@@ -101,6 +106,11 @@ export default function HomePanel() {
                     <Clock className="w-4 h-4 text-muted-foreground"/> {call.duration}
                   </TableCell>
                   <TableCell>{call.date}</TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <PlayCircle className="text-muted-foreground hover:text-primary" />
+                    </Button>
+                  </TableCell>
                   <TableCell className="text-right">
                     <Badge variant={call.risk === 'high' ? 'destructive' : call.risk === 'medium' ? 'secondary' : 'default'}
                            className={

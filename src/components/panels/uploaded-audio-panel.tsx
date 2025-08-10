@@ -17,7 +17,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 
 export default function UploadedAudioPanel() {
-    const { uploadedFiles, setUploadedFiles, uploadAudioFile } = useContext(AppContext);
+    const { uploadedFiles, uploadAudioFile, updateUploadedFile, deleteUploadedFile } = useContext(AppContext);
     const [transcriptToShow, setTranscriptToShow] = useState<string | null>(null);
     const [fileToRename, setFileToRename] = useState<UploadedFile | null>(null);
     const [editingName, setEditingName] = useState('');
@@ -40,10 +40,6 @@ export default function UploadedAudioPanel() {
         const file = event.target.files?.[0];
         if (file) {
           uploadAudioFile(file);
-          toast({
-              title: "File Uploaded",
-              description: `${file.name} is being processed. It will appear here and in the call history.`,
-          });
         }
     };
 
@@ -68,20 +64,12 @@ export default function UploadedAudioPanel() {
     
     const handleSaveRename = () => {
         if (!fileToRename) return;
-        setUploadedFiles(uploadedFiles.map(a => a.id === fileToRename.id ? { ...a, name: editingName } : a));
-        toast({
-            title: "File Renamed",
-            description: `Renamed to ${editingName}`
-        })
+        updateUploadedFile(fileToRename.id, editingName)
         setFileToRename(null);
     }
 
-    const handleDeleteFile = (id: number) => {
-        setUploadedFiles(uploadedFiles.filter(a => a.id !== id));
-         toast({
-            title: "File Deleted",
-            variant: "destructive"
-        })
+    const handleDeleteFile = (id: string) => {
+        deleteUploadedFile(id);
     }
 
 
@@ -90,7 +78,7 @@ export default function UploadedAudioPanel() {
         <div className="h-full flex flex-col gap-6 animate-text-fade-in">
             <div>
                 <h1 className="text-3xl font-bold tracking-tighter">Uploaded Audio</h1>
-                <p className="text-muted-foreground">Manage and analyze your uploaded audio files.</p>
+                <p className="text-muted-foreground">Manage and analyze your uploaded audio files from the database.</p>
             </div>
             <Card className="glassmorphic-card holographic-noise flex-grow flex flex-col">
                 <CardHeader className="flex flex-row items-center justify-between">
@@ -149,7 +137,7 @@ export default function UploadedAudioPanel() {
                                                         <AlertDialogHeader>
                                                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                                             <AlertDialogDescription>
-                                                                This action cannot be undone. This will permanently delete the audio file.
+                                                                This action cannot be undone. This will permanently delete the audio file from the database.
                                                             </AlertDialogDescription>
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>

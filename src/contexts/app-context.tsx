@@ -1,9 +1,13 @@
 
 "use client";
 
-import React, { createContext, useState, useRef, useCallback } from 'react';
+import React, { createContext, useState, useRef, useCallback, useEffect } from 'react';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from '@/lib/firebase';
 import type { AppState, AppContextType, UploadedFile, CallLog } from '@/types';
-import { initialCallHistory, mockUploadedAudio } from '@/lib/mock-data';
+import { initialCallHistory } from '@/lib/mock-data';
+import { useToast } from '@/hooks/use-toast';
 
 const initialState: AppState = {
   activePanel: 'home',
@@ -23,7 +27,7 @@ const initialState: AppState = {
     }
   },
   riskLevel: 'low',
-  uploadedFiles: mockUploadedAudio,
+  uploadedFiles: [],
   callHistory: initialCallHistory,
 };
 
@@ -35,6 +39,8 @@ export const AppContext = createContext<AppContextType>({
   uploadAudioFile: () => {},
   setUploadedFiles: () => {},
   setCallHistory: () => {},
+  updateUploadedFile: async () => {},
+  deleteUploadedFile: async () => {},
 });
 
 const parseTranscript = (transcript: string, contact: string) => {
@@ -61,6 +67,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const transcriptionIndexRef = useRef<number>(0);
   const mockCallSegments = useRef<{ speaker: string, text: string }[]>([]);
+  const { toast } = useToast();
+
+  const fetchUploadedFiles = useCallback(async () => {
+    try {
+        const querySnapshot = await getDocs(collection(db, "audioFiles"));
+        const files: UploadedFile[] = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            files.push({
+                id: doc.id,
+                name: data.name,
+                duration: data.duration,
+                transcript: data.transcript,
+                audioDataUri: data.url,
+            });
+        });
+        setState(prevState => ({ ...prevState, uploadedFiles: files }));
+    } catch (error) {
+        console.error("Error fetching uploaded files: ", error);
+        toast({ title: "Error", description: "Could not fetch uploaded files from the database.", variant: "destructive" });
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchUploadedFiles();
+  }, [fetchUploadedFiles]);
+
 
   const endCall = useCallback(() => {
     if (intervalRef.current) {
@@ -145,50 +178,101 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setState((prevState) => ({ ...prevState, activePanel: panel }));
   };
 
-  const uploadAudioFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const audioDataUri = e.target?.result as string;
-      const audio = new Audio(audioDataUri);
-      audio.onloadedmetadata = () => {
-        const duration = audio.duration;
-        const newId = Date.now(); // Unique ID
-        const formattedDuration = `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}`;
-        const newTranscript = `(Transcript for ${file.name} would be generated via speech-to-text AI)`;
+  const uploadAudioFile = async (file: File) => {
+    if (!file) return;
 
-        const newCallLog: CallLog = {
-          id: newId,
-          type: 'Uploaded',
-          contact: file.name,
-          duration: formattedDuration,
-          date: new Date().toISOString().split('T')[0],
-          risk: 'low', // Default risk, should be analyzed
-          emotion: 'Casual', // Default emotion
-          transcript: newTranscript,
-          audioDataUri,
+    toast({ title: "Uploading...", description: "Your file is being uploaded and processed." });
+
+    try {
+        const storageRef = ref(storage, `audio/${Date.now()}_${file.name}`);
+        const uploadResult = await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(uploadResult.ref);
+
+        const audio = new Audio(downloadURL);
+        audio.onloadedmetadata = async () => {
+            const duration = audio.duration;
+            const formattedDuration = `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}`;
+            const newTranscript = `(Transcript for ${file.name} would be generated via speech-to-text AI)`;
+
+            const docRef = await addDoc(collection(db, "audioFiles"), {
+                name: file.name,
+                duration: formattedDuration,
+                transcript: newTranscript,
+                url: downloadURL,
+                createdAt: new Date(),
+            });
+            
+            const newUploadedFile: UploadedFile = {
+                id: docRef.id,
+                name: file.name,
+                duration: formattedDuration,
+                transcript: newTranscript,
+                audioDataUri: downloadURL,
+            }
+
+            const newCallLog: CallLog = {
+              id: docRef.id,
+              type: 'Uploaded',
+              contact: file.name,
+              duration: formattedDuration,
+              date: new Date().toISOString().split('T')[0],
+              risk: 'low',
+              emotion: 'Casual',
+              transcript: newTranscript,
+              audioDataUri: downloadURL,
+            };
+
+            setState(prevState => ({
+              ...prevState,
+              uploadedFiles: [newUploadedFile, ...prevState.uploadedFiles],
+              callHistory: [newCallLog, ...prevState.callHistory],
+            }));
+            
+            toast({ title: "Success", description: "File uploaded and saved to the database." });
         };
-        
-        const newUploadedFile: UploadedFile = {
-            id: newId,
-            name: file.name,
-            duration: formattedDuration,
-            transcript: newTranscript,
-            audioDataUri: audioDataUri,
+        audio.onerror = () => {
+             toast({ title: "Error", description: "Could not load audio metadata.", variant: "destructive" });
         }
 
-        setState(prevState => ({
-          ...prevState,
-          callHistory: [newCallLog, ...prevState.callHistory],
-          uploadedFiles: [newUploadedFile, ...prevState.uploadedFiles],
-        }));
-      };
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+        console.error("Error uploading file: ", error);
+        toast({ title: "Upload Failed", description: "There was an error uploading your file.", variant: "destructive" });
+    }
   };
   
   const setUploadedFiles = (files: UploadedFile[]) => {
       setState(prevState => ({ ...prevState, uploadedFiles: files }));
   }
+  
+  const updateUploadedFile = async (id: string, newName: string) => {
+    try {
+        const fileDocRef = doc(db, 'audioFiles', id);
+        await updateDoc(fileDocRef, { name: newName });
+        setState(prevState => ({
+            ...prevState,
+            uploadedFiles: prevState.uploadedFiles.map(f => f.id === id ? { ...f, name: newName } : f)
+        }));
+        toast({ title: "Success", description: "File renamed successfully." });
+    } catch (error) {
+        console.error("Error renaming file:", error);
+        toast({ title: "Error", description: "Failed to rename file.", variant: "destructive" });
+    }
+  };
+
+  const deleteUploadedFile = async (id: string) => {
+      try {
+          await deleteDoc(doc(db, "audioFiles", id));
+          setState(prevState => ({
+              ...prevState,
+              uploadedFiles: prevState.uploadedFiles.filter(f => f.id !== id),
+              callHistory: prevState.callHistory.filter(c => c.id !== id || c.type !== 'Uploaded'),
+          }));
+          toast({ title: "File Deleted", variant: "destructive" });
+      } catch (error) {
+          console.error("Error deleting file:", error);
+          toast({ title: "Error", description: "Failed to delete file.", variant: "destructive" });
+      }
+  };
 
   const setCallHistory = (callHistory: CallLog[]) => {
     setState(prevState => ({ ...prevState, callHistory }));
@@ -196,7 +280,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
   return (
-    <AppContext.Provider value={{ ...state, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory }}>
+    <AppContext.Provider value={{ ...state, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile }}>
       {children}
     </AppContext.Provider>
   );

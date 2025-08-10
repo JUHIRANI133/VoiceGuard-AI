@@ -21,7 +21,7 @@ export interface CallData {
 }
 
 export interface UploadedFile {
-    id: number;
+    id: string;
     name: string;
     duration: string;
     transcript: string;
@@ -29,7 +29,7 @@ export interface UploadedFile {
 }
 
 export interface CallLog {
-    id: number;
+    id: string | number;
     type: 'Incoming' | 'Outgoing' | 'Uploaded';
     contact: string;
     duration: string;
@@ -57,4 +57,6 @@ export interface AppContextType extends AppState {
     uploadAudioFile: (file: File) => void;
     setUploadedFiles: (files: UploadedFile[]) => void;
     setCallHistory: (callHistory: CallLog[]) => void;
+    updateUploadedFile: (id: string, newName: string) => Promise<void>;
+    deleteUploadedFile: (id: string) => Promise<void>;
 }

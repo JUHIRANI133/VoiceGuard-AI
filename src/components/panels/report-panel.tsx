@@ -37,9 +37,9 @@ export default function ReportPanel() {
             <CardHeader className="text-center space-y-2 pb-4">
                  <div className="inline-flex items-center justify-center gap-2 text-2xl font-bold text-glow-cyan">
                     <ShieldCheck className="w-8 h-8"/>
-                    <h1>VoiceGuard AI - Project Report</h1>
+                    <h1>VoiceGuard AI</h1>
                  </div>
-                 <p className="text-muted-foreground">A Comprehensive Analysis of the Real-Time Scam Detection Application</p>
+                 <p className="text-muted-foreground">Your guardian against digital deception</p>
             </CardHeader>
             <Separator/>
             <CardContent className="p-6">

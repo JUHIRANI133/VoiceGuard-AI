@@ -187,51 +187,60 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const storageRef = ref(storage, `audio/${Date.now()}_${file.name}`);
         const uploadResult = await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(uploadResult.ref);
+        
+        const placeholderDuration = "0:00";
+        const newTranscript = `(Transcript for ${file.name} would be generated via speech-to-text AI)`;
 
+        const docRef = await addDoc(collection(db, "audioFiles"), {
+            name: file.name,
+            duration: placeholderDuration,
+            transcript: newTranscript,
+            url: downloadURL,
+            createdAt: new Date(),
+        });
+        
+        const newUploadedFile: UploadedFile = {
+            id: docRef.id,
+            name: file.name,
+            duration: placeholderDuration,
+            transcript: newTranscript,
+            audioDataUri: downloadURL,
+        }
+
+        const newCallLog: CallLog = {
+          id: docRef.id,
+          type: 'Uploaded',
+          contact: file.name,
+          duration: placeholderDuration,
+          date: new Date().toISOString().split('T')[0],
+          risk: 'low',
+          emotion: 'Casual',
+          transcript: newTranscript,
+          audioDataUri: downloadURL,
+        };
+
+        setState(prevState => ({
+          ...prevState,
+          uploadedFiles: [newUploadedFile, ...prevState.uploadedFiles],
+          callHistory: [newCallLog, ...prevState.callHistory],
+        }));
+        
+        toast({ title: "Success", description: "File uploaded and saved to the database." });
+
+        // Asynchronously update duration
         const audio = new Audio(downloadURL);
         audio.onloadedmetadata = async () => {
             const duration = audio.duration;
             const formattedDuration = `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}`;
-            const newTranscript = `(Transcript for ${file.name} would be generated via speech-to-text AI)`;
-
-            const docRef = await addDoc(collection(db, "audioFiles"), {
-                name: file.name,
-                duration: formattedDuration,
-                transcript: newTranscript,
-                url: downloadURL,
-                createdAt: new Date(),
-            });
-            
-            const newUploadedFile: UploadedFile = {
-                id: docRef.id,
-                name: file.name,
-                duration: formattedDuration,
-                transcript: newTranscript,
-                audioDataUri: downloadURL,
-            }
-
-            const newCallLog: CallLog = {
-              id: docRef.id,
-              type: 'Uploaded',
-              contact: file.name,
-              duration: formattedDuration,
-              date: new Date().toISOString().split('T')[0],
-              risk: 'low',
-              emotion: 'Casual',
-              transcript: newTranscript,
-              audioDataUri: downloadURL,
-            };
-
+            await updateDoc(doc(db, "audioFiles", docRef.id), { duration: formattedDuration });
             setState(prevState => ({
-              ...prevState,
-              uploadedFiles: [newUploadedFile, ...prevState.uploadedFiles],
-              callHistory: [newCallLog, ...prevState.callHistory],
+                ...prevState,
+                uploadedFiles: prevState.uploadedFiles.map(f => f.id === docRef.id ? { ...f, duration: formattedDuration } : f),
+                callHistory: prevState.callHistory.map(c => c.id === docRef.id ? { ...c, duration: formattedDuration } : c)
             }));
-            
-            toast({ title: "Success", description: "File uploaded and saved to the database." });
         };
         audio.onerror = () => {
-             toast({ title: "Error", description: "Could not load audio metadata.", variant: "destructive" });
+             console.error("Could not load audio metadata to calculate duration.");
         }
 
     } catch (error) {

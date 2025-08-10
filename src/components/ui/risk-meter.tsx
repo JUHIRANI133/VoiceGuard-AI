@@ -15,40 +15,43 @@ export default function RiskMeter({ riskLevel, size = 150 }: RiskMeterProps) {
       case 'high':
         return {
           color: 'hsl(var(--color-risk-danger))',
-          glow: 'hsl(var(--color-risk-danger) / 0.5)',
+          glow: 'hsl(var(--color-risk-danger) / 0.7)',
           text: 'High Risk',
-          icon: 'M18.36 6.64a9 9 0 1 1-12.73 0',
+          dashOffset: 0,
         };
       case 'medium':
         return {
           color: 'hsl(var(--color-risk-caution))',
-          glow: 'hsl(var(--color-risk-caution) / 0.5)',
+          glow: 'hsl(var(--color-risk-caution) / 0.7)',
           text: 'Caution',
-          icon: 'M18.36 6.64a9 9 0 1 1-12.73 0',
+          dashOffset: 94,
         };
       default:
         return {
           color: 'hsl(var(--color-risk-safe))',
-          glow: 'hsl(var(--color-risk-safe) / 0.5)',
+          glow: 'hsl(var(--color-risk-safe) / 0.7)',
           text: 'Secure',
-          icon: 'M18.36 6.64a9 9 0 1 1-12.73 0',
+          dashOffset: 283,
         };
     }
   }, [riskLevel]);
 
-  const animationClass = riskLevel === 'high' ? 'animate-pulse' : '';
+  const animationClass = riskLevel === 'high' ? 'animate-pulsating-ring' : '';
 
   return (
     <div
-      className={cn('relative flex items-center justify-center rounded-full', animationClass)}
+      className={cn('relative flex items-center justify-center rounded-full transition-all duration-500', animationClass)}
       style={{
         width: size,
         height: size,
         '--glow-color': riskProps.glow,
-        boxShadow: `0 0 20px ${riskProps.glow}, inset 0 0 15px ${riskProps.glow}`,
-        background: `radial-gradient(circle, hsl(var(--background)) 50%, ${riskProps.color} 150%)`
+        background: `radial-gradient(circle, hsl(var(--background)) 40%, transparent 70%)`
       }}
     >
+      <div 
+        className="absolute inset-0 rounded-full" 
+        style={{boxShadow: `0 0 20px ${riskProps.glow}, inset 0 0 15px ${riskProps.glow}`}}
+      />
         <svg
             width={size}
             height={size}
@@ -56,8 +59,8 @@ export default function RiskMeter({ riskLevel, size = 150 }: RiskMeterProps) {
             className="absolute inset-0"
         >
             <defs>
-                <filter id="glow">
-                    <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
                     <feMerge>
                         <feMergeNode in="coloredBlur" />
                         <feMergeNode in="SourceGraphic" />
@@ -69,17 +72,17 @@ export default function RiskMeter({ riskLevel, size = 150 }: RiskMeterProps) {
                 cy="50"
                 r="45"
                 stroke={riskProps.color}
-                strokeWidth="4"
+                strokeWidth="5"
                 fill="none"
                 strokeDasharray="283"
-                strokeDashoffset={riskLevel === 'high' ? 0 : riskLevel === 'medium' ? 94 : 283}
+                strokeDashoffset={riskProps.dashOffset}
                 transform="rotate(-90 50 50)"
-                style={{ transition: 'stroke-dashoffset 1s ease-in-out', filter: 'url(#glow)' }}
+                style={{ transition: 'stroke-dashoffset 1s ease-in-out, stroke 1s ease-in-out', filter: 'url(#glow)' }}
                 strokeLinecap="round"
             />
         </svg>
 
-      <div className="z-10 text-center">
+      <div className="z-10 text-center animate-text-fade-in">
         <div className="font-headline text-2xl font-bold" style={{ color: riskProps.color, textShadow: `0 0 10px ${riskProps.glow}` }}>
           {riskProps.text}
         </div>

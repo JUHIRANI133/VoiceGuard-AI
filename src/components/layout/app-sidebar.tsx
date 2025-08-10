@@ -27,24 +27,30 @@ export default function AppSidebar() {
   return (
     <>
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <ShieldCheck className="w-8 h-8 text-glow text-primary" />
+        <div className="flex items-center gap-3 animate-text-fade-in">
+          <ShieldCheck className="w-8 h-8 text-glow-cyan" />
           <div className="flex flex-col">
-            <h2 className="text-lg font-bold tracking-tighter font-headline">VoiceGuard AI</h2>
+            <h2 className="text-lg font-bold tracking-tight font-headline">VoiceGuard AI</h2>
             <p className="text-xs text-muted-foreground">Protection Active</p>
           </div>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
-          {menuItems.map((item) => (
-            <SidebarMenuItem key={item.id}>
+          {menuItems.map((item, index) => (
+            <SidebarMenuItem 
+              key={item.id} 
+              className="animate-text-fade-in"
+              style={{animationDelay: `${index * 100}ms`}}
+            >
               <SidebarMenuButton
                 onClick={() => setActivePanel(item.id as any)}
                 isActive={activePanel === item.id && !isCallActive}
                 className={cn(
                   "font-medium",
-                  activePanel === item.id && !isCallActive && "glassmorphic border-primary/50 text-glow"
+                  "transition-all duration-300",
+                  "border border-transparent",
+                  activePanel === item.id && !isCallActive && "glassmorphic border-primary/50 text-glow-cyan"
                 )}
                 tooltip={{children: item.label, side: "right"}}
                 disabled={isCallActive}

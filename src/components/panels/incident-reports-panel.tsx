@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { FileText, Share2, AlertTriangle, ShieldCheck, HelpCircle } from "lucide-react";
 import type { RiskLevel } from "@/types";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 const mockReports = [
   { date: "2024-08-14", caller: "Rohan Kumar", number: "+91 98765 43210", risk: "high", type: "Impersonation", verification: "Spoofed" },
@@ -24,9 +26,9 @@ const mockReports = [
 
 const RiskBadge = ({ risk }: { risk: RiskLevel }) => {
   const badgeStyles = {
-    high: "bg-destructive/20 text-destructive border-destructive/50 hover:bg-destructive/30",
-    medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50 hover:bg-yellow-500/30",
-    low: "bg-green-500/20 text-green-400 border-green-500/50 hover:bg-green-500/30",
+    high: "bg-risk-danger/20 text-risk-danger border-risk-danger/50 hover:bg-risk-danger/30",
+    medium: "bg-risk-caution/20 text-risk-caution border-risk-caution/50 hover:bg-risk-caution/30",
+    low: "bg-risk-safe/20 text-risk-safe border-risk-safe/50 hover:bg-risk-safe/30",
   };
   const icon = {
     high: <AlertTriangle className="w-3 h-3 mr-1" />,
@@ -36,53 +38,99 @@ const RiskBadge = ({ risk }: { risk: RiskLevel }) => {
   return <Badge variant="outline" className={badgeStyles[risk]}>{icon[risk]} {risk.charAt(0).toUpperCase() + risk.slice(1)}</Badge>;
 };
 
+const ReportCard = ({ report, onBack }: { report: typeof mockReports[0], onBack: () => void }) => (
+    <Card className="glassmorphic-card holographic-noise shine-sweep h-full flex flex-col justify-between">
+        <CardHeader>
+            <CardTitle>Incident Details</CardTitle>
+            <CardDescription>Call from {report.caller} on {report.date}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <div><strong>Caller:</strong> {report.caller}</div>
+            <div><strong>Number:</strong> {report.number}</div>
+            <div><strong>Risk Level:</strong> <RiskBadge risk={report.risk as RiskLevel}/></div>
+            <div><strong>Detected Threat:</strong> {report.type}</div>
+            <div><strong>Verification Status:</strong> {report.verification}</div>
+        </CardContent>
+        <div className="p-6">
+          <Button onClick={onBack}>Back to Reports</Button>
+        </div>
+    </Card>
+);
+
 export default function IncidentReportsPanel() {
+  const [flippedCard, setFlippedCard] = useState<number | null>(null);
+
+  const handleFlip = (index: number) => {
+      setFlippedCard(index);
+  }
+
+  const handleUnflip = () => {
+      setFlippedCard(null);
+  }
+
+  if (flippedCard !== null) {
+      return (
+          <div className="h-full [perspective:1000px]">
+              <div className="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d] [transform:rotateY(180deg)]">
+                  <div className="absolute h-full w-full [backface-visibility:hidden]">
+                      {/* This would be the front, but we don't need it */}
+                  </div>
+                  <div className="h-full w-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                      <ReportCard report={mockReports[flippedCard]} onBack={handleUnflip} />
+                  </div>
+              </div>
+          </div>
+      )
+  }
+
   return (
-    <div className="h-full flex flex-col gap-6">
+    <div className="h-full flex flex-col gap-6 animate-text-fade-in">
       <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tighter text-glow">Incident Report Center</h1>
+            <h1 className="text-3xl font-bold tracking-tighter">Incident Report Center</h1>
             <p className="text-muted-foreground">Review flagged calls and suspicious activity.</p>
           </div>
-          <Button className="glassmorphic hover:border-primary">
+          <Button variant="glass" className="border-marvel-blue text-marvel-blue">
             <Share2 className="w-4 h-4 mr-2" />
             Export All
           </Button>
       </div>
 
-      <Card className="glassmorphic holographic-noise flex-grow">
+      <Card className="glassmorphic-card holographic-noise flex-grow">
         <CardContent className="p-4">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent border-b-white/20">
-                <TableHead>Date</TableHead>
-                <TableHead>Caller</TableHead>
-                <TableHead>Caller Number</TableHead>
-                <TableHead>Risk Level</TableHead>
-                <TableHead>Detected Threat</TableHead>
-                <TableHead>Verification</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockReports.map((report, index) => (
-                <TableRow key={index} className="glassmorphic-row border-b-white/10">
-                  <TableCell>{report.date}</TableCell>
-                  <TableCell>{report.caller}</TableCell>
-                  <TableCell>{report.number}</TableCell>
-                  <TableCell><RiskBadge risk={report.risk as RiskLevel} /></TableCell>
-                  <TableCell>{report.type}</TableCell>
-                  <TableCell>{report.verification}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">
-                        <FileText className="w-4 h-4 mr-2"/>
-                        Details
-                    </Button>
-                  </TableCell>
+          <div className="overflow-auto">
+            <Table>
+                <TableHeader>
+                <TableRow className="hover:bg-transparent border-b-white/20">
+                    <TableHead>Date</TableHead>
+                    <TableHead>Caller</TableHead>
+                    <TableHead>Caller Number</TableHead>
+                    <TableHead>Risk Level</TableHead>
+                    <TableHead>Detected Threat</TableHead>
+                    <TableHead>Verification</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                </TableHeader>
+                <TableBody>
+                {mockReports.map((report, index) => (
+                    <TableRow key={index} className="glassmorphic-row border-b-white/10 hover:bg-cyan-400/10">
+                    <TableCell>{report.date}</TableCell>
+                    <TableCell>{report.caller}</TableCell>
+                    <TableCell>{report.number}</TableCell>
+                    <TableCell><RiskBadge risk={report.risk as RiskLevel} /></TableCell>
+                    <TableCell>{report.type}</TableCell>
+                    <TableCell>{report.verification}</TableCell>
+                    <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" onClick={() => handleFlip(index)}>
+                            <FileText className="w-4 h-4 mr-2"/>
+                            Details
+                        </Button>
+                    </TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

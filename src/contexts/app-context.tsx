@@ -42,7 +42,7 @@ export const AppContext = createContext<AppContextType>({
   setActivePanel: () => {},
   startMockCall: () => {},
   endCall: () => {},
-  uploadAudioFile: () => {},
+  uploadAudioFile: async () => {},
   setUploadedFiles: () => {},
   setCallHistory: () => {},
   updateUploadedFile: async () => {},
@@ -337,9 +337,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setState(prevState => ({ ...prevState, language }));
   };
   
-  const t = (key: keyof (typeof translations)['en']) => {
+  const t = useCallback((key: keyof (typeof translations)['en']) => {
     return translations[state.language][key] || translations['en'][key] || key;
-  };
+  }, [state.language]);
 
   const setSendGpsToEmergencyContacts = (enabled: boolean) => {
     setState(prevState => ({ ...prevState, sendGpsToEmergencyContacts: enabled }));
@@ -356,8 +356,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }
 
+  const contextValue = {
+    ...state,
+    t,
+    setLanguage,
+    setActivePanel,
+    startMockCall,
+    endCall,
+    uploadAudioFile,
+    setUploadedFiles,
+    setCallHistory,
+    updateUploadedFile,
+    deleteUploadedFile,
+    addEmergencyContact,
+    removeEmergencyContact,
+    updateEmergencyContact,
+    setAppPin,
+    toggleLock,
+    setSendGpsToEmergencyContacts
+  };
+
   return (
-    <AppContext.Provider value={{ ...state, t, setLanguage, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile, addEmergencyContact, removeEmergencyContact, updateEmergencyContact, setAppPin, toggleLock, setSendGpsToEmergencyContacts }}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

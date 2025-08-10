@@ -5,8 +5,8 @@ import React, { createContext, useState, useRef, useCallback, useEffect } from '
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from '@/lib/firebase';
-import type { AppState, AppContextType, UploadedFile, CallLog } from '@/types';
-import { initialCallHistory } from '@/lib/mock-data';
+import type { AppState, AppContextType, UploadedFile, CallLog, EmergencyContact } from '@/types';
+import { initialCallHistory, initialEmergencyContacts } from '@/lib/mock-data';
 import { useToast } from '@/hooks/use-toast';
 
 const initialState: AppState = {
@@ -29,6 +29,9 @@ const initialState: AppState = {
   riskLevel: 'low',
   uploadedFiles: [],
   callHistory: initialCallHistory,
+  emergencyContacts: initialEmergencyContacts,
+  appPin: null,
+  isAppLocked: false,
 };
 
 export const AppContext = createContext<AppContextType>({
@@ -41,6 +44,11 @@ export const AppContext = createContext<AppContextType>({
   setCallHistory: () => {},
   updateUploadedFile: async () => {},
   deleteUploadedFile: async () => {},
+  addEmergencyContact: () => {},
+  removeEmergencyContact: () => {},
+  updateEmergencyContact: () => {},
+  setAppPin: () => {},
+  toggleLock: () => {},
 });
 
 const parseTranscript = (transcript: string, contact: string) => {
@@ -277,10 +285,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setCallHistory = (callHistory: CallLog[]) => {
     setState(prevState => ({ ...prevState, callHistory }));
   }
+  
+  const addEmergencyContact = (contact: Omit<EmergencyContact, 'id'>) => {
+    setState(prevState => ({
+      ...prevState,
+      emergencyContacts: [...prevState.emergencyContacts, { ...contact, id: Date.now().toString() }]
+    }));
+    toast({ title: "Contact Added", description: `${contact.name} has been added to your emergency contacts.` });
+  };
+  
+  const removeEmergencyContact = (id: string) => {
+    setState(prevState => ({
+      ...prevState,
+      emergencyContacts: prevState.emergencyContacts.filter(c => c.id !== id)
+    }));
+    toast({ title: "Contact Removed", variant: "destructive" });
+  };
+  
+  const updateEmergencyContact = (updatedContact: EmergencyContact) => {
+     setState(prevState => ({
+      ...prevState,
+      emergencyContacts: prevState.emergencyContacts.map(c => c.id === updatedContact.id ? updatedContact : c)
+    }));
+    toast({ title: "Contact Updated", description: `${updatedContact.name}'s details have been updated.` });
+  }
 
+  const setAppPin = (pin: string | null) => {
+    setState(prevState => ({ ...prevState, appPin: pin, isAppLocked: !!pin }));
+    if (pin) {
+      toast({ title: "PIN Set", description: "Your app is now protected by a PIN." });
+    } else {
+      toast({ title: "PIN Removed", description: "Your app is no longer protected by a PIN." });
+    }
+  };
+  
+  const toggleLock = () => {
+      if (state.appPin) {
+          setState(prevState => ({ ...prevState, isAppLocked: !prevState.isAppLocked }));
+      } else {
+          toast({ title: "No PIN Set", description: "Please set a PIN first to lock the app.", variant: "destructive" });
+      }
+  };
 
   return (
-    <AppContext.Provider value={{ ...state, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile }}>
+    <AppContext.Provider value={{ ...state, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile, addEmergencyContact, removeEmergencyContact, updateEmergencyContact, setAppPin, toggleLock }}>
       {children}
     </AppContext.Provider>
   );

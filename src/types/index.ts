@@ -3,6 +3,14 @@ export type Panel = 'home' | 'contacts' | 'uploaded-audio' | 'emotional-tracker'
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 
+export interface EmergencyContact {
+    id: string;
+    name: string;
+    relation: string;
+    phone: string;
+    profession: string;
+}
+
 export interface CallAnalysis {
     voiceprintMatch: number;
     numberLegitimacy: 'Verified' | 'Unknown' | 'Spoofed';
@@ -48,6 +56,9 @@ export interface AppState {
     riskLevel: RiskLevel;
     uploadedFiles: UploadedFile[];
     callHistory: CallLog[];
+    emergencyContacts: EmergencyContact[];
+    appPin: string | null;
+    isAppLocked: boolean;
 }
 
 export interface AppContextType extends AppState {
@@ -59,4 +70,9 @@ export interface AppContextType extends AppState {
     setCallHistory: (callHistory: CallLog[]) => void;
     updateUploadedFile: (id: string, newName: string) => Promise<void>;
     deleteUploadedFile: (id: string) => Promise<void>;
+    addEmergencyContact: (contact: Omit<EmergencyContact, 'id'>) => void;
+    removeEmergencyContact: (id: string) => void;
+    updateEmergencyContact: (contact: EmergencyContact) => void;
+    setAppPin: (pin: string | null) => void;
+    toggleLock: () => void;
 }

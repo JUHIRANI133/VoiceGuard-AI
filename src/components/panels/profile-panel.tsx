@@ -1,18 +1,19 @@
+
 "use client";
 
+import { useContext } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Mail, Phone, Briefcase, BookOpenText, Cake, MapPin, Users, ShieldAlert } from 'lucide-react';
 import { Separator } from "../ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Badge } from "../ui/badge";
+import { AppContext } from '@/contexts/app-context';
 
-const emergencyContacts = [
-    { name: 'Rishab Mehta', relation: 'Husband', phone: '+91 98765 43210', profession: 'Civil Engineer' },
-    { name: 'Aarav Mehta', relation: 'Son', phone: '+91 91234 56789', profession: 'Computer Science Student' },
-];
 
 export default function ProfilePanel() {
+  const { emergencyContacts } = useContext(AppContext);
+
   return (
     <div className="h-full flex flex-col gap-6 animate-text-fade-in">
       <div>
@@ -87,7 +88,7 @@ export default function ProfilePanel() {
                 <CardContent>
                     <ul className="space-y-4">
                        {emergencyContacts.map(contact => (
-                         <li key={contact.name} className="p-3 glassmorphic rounded-lg">
+                         <li key={contact.id} className="p-3 glassmorphic rounded-lg">
                             <p className="font-bold text-primary">{contact.name}</p>
                             <p className="text-xs text-muted-foreground">{contact.relation} - {contact.profession}</p>
                             <p className="text-sm mt-1">{contact.phone}</p>

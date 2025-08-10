@@ -40,6 +40,7 @@ export const translations = {
     contactPoliceLabel: "Automatically Contact Police",
     contactPoliceTooltip: "When enabled, the nearest police station will be automatically notified of a potential threat in your area during a high-risk call.",
     detectLocationLabel: "Detect Caller Location",
+    detectLocationTooltip: "Uses the caller's phone number to attempt to backtrack their geographical location, providing you with context to help assess the potential threat level.",
   },
   hi: {
     sidebarHome: "होम",
@@ -81,6 +82,7 @@ export const translations = {
     contactPoliceLabel: "स्वचालित रूप से पुलिस से संपर्क करें",
     contactPoliceTooltip: "सक्षम होने पर, उच्च-जोखिम वाली कॉल के दौरान आपके क्षेत्र में संभावित खतरे के बारे में निकटतम पुलिस स्टेशन को स्वचालित रूप से सूचित किया जाएगा।",
     detectLocationLabel: "कॉलर का स्थान पता लगाएँ",
+    detectLocationTooltip: "कॉलर के फ़ोन नंबर का उपयोग उनके भौगोलिक स्थान को ट्रैक करने का प्रयास करने के लिए करता है, जो आपको संभावित खतरे के स्तर का आकलन करने में मदद करने के लिए संदर्भ प्रदान करता है।",
   },
   es: {
     sidebarHome: "Inicio",
@@ -122,6 +124,7 @@ export const translations = {
     contactPoliceLabel: "Contactar a la policía automáticamente",
     contactPoliceTooltip: "Cuando está habilitado, la estación de policía más cercana será notificada automáticamente de una posible amenaza en su área durante una llamada de alto riesgo.",
     detectLocationLabel: "Detectar la ubicación de la persona que llama",
+    detectLocationTooltip: "Utiliza el número de teléfono de la persona que llama para intentar rastrear su ubicación geográfica, proporcionándole contexto para ayudar a evaluar el nivel de amenaza potencial.",
   },
   fr: {
     sidebarHome: "Accueil",
@@ -163,5 +166,6 @@ export const translations = {
     contactPoliceLabel: "Contacter automatiquement la police",
     contactPoliceTooltip: "Lorsqu'il est activé, le poste de police le plus proche sera automatiquement informé d'une menace potentielle dans votre région lors d'un appel à haut risque.",
     detectLocationLabel: "Détecter l'emplacement de l'appelant",
+    detectLocationTooltip: "Utilise le numéro de téléphone de l'appelant pour tenter de retrouver sa situation géographique, vous fournissant ainsi un contexte pour vous aider à évaluer le niveau de menace potentiel.",
   },
 };

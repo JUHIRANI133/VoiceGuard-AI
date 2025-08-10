@@ -200,13 +200,20 @@ export default function SettingsPanel() {
                       <p>{t('contactPoliceTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
-                  <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
-                    <div className="flex items-center gap-3">
-                      <LocateFixed className="w-5 h-5 text-primary" />
-                      <Label htmlFor="detect-location">{t('detectLocationLabel')}</Label>
-                    </div>
-                    <Switch id="detect-location" />
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                        <div className="flex items-center gap-3">
+                          <LocateFixed className="w-5 h-5 text-primary" />
+                          <Label htmlFor="detect-location">{t('detectLocationLabel')}</Label>
+                        </div>
+                        <Switch id="detect-location" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="glassmorphic max-w-xs">
+                      <p>{t('detectLocationTooltip')}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </CardContent>
               </AccordionContent>
             </Card>

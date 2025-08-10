@@ -81,6 +81,6 @@ export interface AppContextType extends AppState {
     setAppPin: (pin: string | null) => void;
     toggleLock: () => void;
     setLanguage: (language: Language) => void;
-    t: (key: string) => string;
+    t: (key: keyof typeof import('@/lib/i18n').translations.en) => string;
     setSendGpsToEmergencyContacts: (enabled: boolean) => void;
 }

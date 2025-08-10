@@ -17,7 +17,7 @@ import { Input } from '../ui/input';
 import { useToast } from '@/hooks/use-toast';
 
 export default function HomePanel() {
-  const { startMockCall } = useContext(AppContext);
+  const { startMockCall, uploadAudioFile, setActivePanel } = useContext(AppContext);
   const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
@@ -69,12 +69,12 @@ export default function HomePanel() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // TODO: Implement file analysis logic
-      console.log('Selected file:', file.name);
+      uploadAudioFile(file);
       toast({
           title: "File Uploaded",
-          description: `${file.name} is ready for analysis. This feature is not yet implemented.`,
+          description: `${file.name} is now available in the 'Uploaded Audio' panel.`,
       });
+      setActivePanel('uploaded-audio');
     }
   };
 

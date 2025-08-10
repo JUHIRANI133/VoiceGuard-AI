@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -9,30 +9,26 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { FileAudio, Clock, Pencil, FileText, Check, X } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
-
-const mockUploadedAudio = [
-    { id: 1, name: 'meeting_recording_01.wav', duration: '15:30', transcript: 'This is a sample transcript for the first meeting recording...', isRenaming: false },
-    { id: 2, name: 'voicemail_from_client.mp3', duration: '0:45', transcript: 'Hi, this is a voicemail from your client...', isRenaming: false },
-    { id: 3, name: 'lecture_capture_comp-sci.mp3', duration: '45:12', transcript: 'Welcome to the computer science lecture. Today we will be discussing...', isRenaming: false }
-];
+import { AppContext } from '@/contexts/app-context';
+import type { UploadedFile } from '@/types';
 
 
 export default function UploadedAudioPanel() {
-    const [uploadedAudio, setUploadedAudio] = useState(mockUploadedAudio);
+    const { uploadedFiles, setUploadedFiles } = useContext(AppContext);
     const [transcriptToShow, setTranscriptToShow] = useState<string | null>(null);
     const [editingName, setEditingName] = useState('');
 
-    const handleRenameClick = (audio: typeof mockUploadedAudio[0]) => {
-        setUploadedAudio(uploadedAudio.map(a => a.id === audio.id ? { ...a, isRenaming: true } : { ...a, isRenaming: false }));
+    const handleRenameClick = (audio: UploadedFile) => {
+        setUploadedFiles(uploadedFiles.map(a => a.id === audio.id ? { ...a, isRenaming: true } : { ...a, isRenaming: false }));
         setEditingName(audio.name);
     }
     
     const handleSaveRename = (id: number) => {
-        setUploadedAudio(uploadedAudio.map(a => a.id === id ? { ...a, name: editingName, isRenaming: false } : a));
+        setUploadedFiles(uploadedFiles.map(a => a.id === id ? { ...a, name: editingName, isRenaming: false } : a));
     }
 
     const handleCancelRename = (id: number) => {
-        setUploadedAudio(uploadedAudio.map(a => a.id === id ? { ...a, isRenaming: false } : a));
+        setUploadedFiles(uploadedFiles.map(a => a.id === id ? { ...a, isRenaming: false } : a));
     }
 
     const handleShowTranscript = (transcript: string) => {
@@ -60,7 +56,7 @@ export default function UploadedAudioPanel() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {uploadedAudio.map((audio) => (
+                            {uploadedFiles.map((audio) => (
                                 <TableRow key={audio.id}>
                                     <TableCell className="font-medium flex items-center gap-2">
                                         <FileAudio className="w-4 h-4 text-muted-foreground"/>
@@ -123,4 +119,3 @@ export default function UploadedAudioPanel() {
     </>
   );
 }
-

@@ -19,15 +19,26 @@ export interface CallData {
     analysis: CallAnalysis;
 }
 
+export interface UploadedFile {
+    id: number;
+    name: string;
+    duration: string;
+    transcript: string;
+    isRenaming: boolean;
+}
+
 export interface AppState {
     activePanel: Panel;
     isCallActive: boolean;
     callData: CallData;
     riskLevel: RiskLevel;
+    uploadedFiles: UploadedFile[];
 }
 
 export interface AppContextType extends AppState {
     setActivePanel: (panel: Panel) => void;
     startMockCall: () => void;
     endCall: () => void;
+    uploadAudioFile: (file: File) => void;
+    setUploadedFiles: (files: UploadedFile[]) => void;
 }

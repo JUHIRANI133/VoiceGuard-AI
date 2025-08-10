@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Mic, Upload, Phone, Clock, AlertTriangle, CheckCircle, PlayCircle, Loader, Volume2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import { Mic, Upload, Phone, Clock, AlertTriangle, CheckCircle, PlayCircle, Loader, Volume2, FileText, X } from 'lucide-react';
 import { generateSpeech } from '@/ai/flows/text-to-speech';
+import { ScrollArea } from '../ui/scroll-area';
 
 // Mock data for call history
 const callHistory = [
@@ -24,12 +25,13 @@ const callHistory = [
 
 export default function HomePanel() {
   const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
+  const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [currentCall, setCurrentCall] = useState<{ contact: string; date: string } | null>(null);
+  const [currentCall, setCurrentCall] = useState<(typeof callHistory)[0] | null>(null);
 
   const handlePlayAudio = async (call: typeof callHistory[0]) => {
-    setCurrentCall({ contact: call.contact, date: call.date });
+    setCurrentCall(call);
     setIsAudioPlayerOpen(true);
     setIsLoadingAudio(true);
     try {
@@ -42,6 +44,11 @@ export default function HomePanel() {
     } finally {
       setIsLoadingAudio(false);
     }
+  };
+
+  const handleShowTranscript = (call: typeof callHistory[0]) => {
+    setCurrentCall(call);
+    setIsTranscriptOpen(true);
   };
 
   return (
@@ -116,6 +123,7 @@ export default function HomePanel() {
                   <TableHead>Duration</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Audio</TableHead>
+                  <TableHead>Transcript</TableHead>
                   <TableHead className="text-right">Risk Level</TableHead>
                 </TableRow>
               </TableHeader>
@@ -133,6 +141,11 @@ export default function HomePanel() {
                     <TableCell>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePlayAudio(call)}>
                           <PlayCircle className="text-muted-foreground hover:text-primary" />
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleShowTranscript(call)}>
+                          <FileText className="text-muted-foreground hover:text-primary" />
                       </Button>
                     </TableCell>
                     <TableCell className="text-right">
@@ -171,7 +184,7 @@ export default function HomePanel() {
             ) : audioDataUri ? (
                 <div className="flex flex-col items-center gap-4">
                     <Volume2 className="w-12 h-12 text-primary" />
-                    <audio src={audioDataUri} controls autoPlay>
+                    <audio src={audioDataUri} controls autoPlay onEnded={() => setIsAudioPlayerOpen(false)}>
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -179,6 +192,34 @@ export default function HomePanel() {
               <p className="text-destructive">Could not load audio.</p>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isTranscriptOpen} onOpenChange={setIsTranscriptOpen}>
+        <DialogContent className="glassmorphic-card max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Call Transcript</DialogTitle>
+             <DialogDescription>
+              Call with {currentCall?.contact} on {currentCall?.date}
+            </DialogDescription>
+          </DialogHeader>
+           <ScrollArea className="h-[50vh] my-4">
+                <div className="text-sm leading-relaxed whitespace-pre-wrap font-mono p-4">
+                  {currentCall?.transcript.split('Speaker').map((part, index) => {
+                      if (index === 0) return part;
+                      const speakerId = part.substring(0, 1);
+                      const text = part.substring(2);
+                      const isCaller = speakerId === '1';
+                      return (
+                          <div key={index} className={`mb-4 p-3 rounded-lg ${isCaller ? 'bg-primary/10' : 'bg-secondary/20'}`}>
+                              <p className={`font-bold mb-1 ${isCaller ? 'text-primary' : 'text-foreground'}`}>
+                                {isCaller ? 'Caller' : 'You'}
+                              </p>
+                              <p>{text.trim()}</p>
+                          </div>
+                      );
+                  })}
+                </div>
+            </ScrollArea>
         </DialogContent>
       </Dialog>
     </>

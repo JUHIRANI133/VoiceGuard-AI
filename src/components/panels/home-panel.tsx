@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from "@/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -31,18 +31,27 @@ export default function HomePanel() {
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [currentCall, setCurrentCall] = useState<(typeof callHistory)[0] | null>(null);
+  const audioCache = useRef<Record<number, string>>({});
+
 
   const handlePlayAudio = async (call: typeof callHistory[0]) => {
     setCurrentCall(call);
     setIsAudioPlayerOpen(true);
+    setAudioDataUri(null);
+
+    if (audioCache.current[call.id]) {
+      setAudioDataUri(audioCache.current[call.id]);
+      setIsLoadingAudio(false);
+      return;
+    }
+
     setIsLoadingAudio(true);
-    setAudioDataUri(null); // Clear previous audio
     try {
       const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice });
+      audioCache.current[call.id] = audioDataUri;
       setAudioDataUri(audioDataUri);
     } catch (error) {
       console.error("Failed to generate speech:", error);
-      // You could show a toast notification here
       setAudioDataUri(null);
     } finally {
       setIsLoadingAudio(false);
@@ -238,5 +247,3 @@ export default function HomePanel() {
     </>
   );
 }
-
-    

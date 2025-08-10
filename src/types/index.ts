@@ -1,6 +1,6 @@
 
 
-export type Panel = 'home' | 'contacts' | 'uploaded-audio' | 'emotional-tracker' | 'transcript' | 'scam-map' | 'settings' | 'live-call' | 'profile';
+export type Panel = 'home' | 'contacts' | 'uploaded-audio' | 'emotional-tracker' | 'transcript' | 'scam-map' | 'settings' | 'live-call' | 'profile' | 'report';
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 
@@ -83,5 +83,3 @@ export interface AppContextType extends AppState {
     t: (key: keyof typeof import('@/lib/i18n').translations.en) => string;
     setSendGpsToEmergencyContacts: (enabled: boolean) => void;
 }
-
-    

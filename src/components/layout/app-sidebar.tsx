@@ -2,7 +2,7 @@
 "use client";
 
 import { useContext } from 'react';
-import { ShieldCheck, LayoutDashboard, Contact, HeartPulse, FileText, Map, Settings, Globe, User, UploadCloud } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, Contact, HeartPulse, FileText, Map, Settings, Globe, User, UploadCloud, FileBarChart } from 'lucide-react';
 import {
   SidebarHeader,
   SidebarContent,
@@ -27,6 +27,7 @@ export default function AppSidebar() {
     { id: 'emotional-tracker', label: t('sidebarEmotionalTracker'), icon: HeartPulse },
     { id: 'transcript', label: t('sidebarTranscript'), icon: FileText },
     { id: 'scam-map', label: t('sidebarScamMap'), icon: Map },
+    { id: 'report', label: 'Project Report', icon: FileBarChart },
     { id: 'settings', label: t('sidebarSettings'), icon: Settings },
   ];
 

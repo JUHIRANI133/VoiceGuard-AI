@@ -14,6 +14,7 @@ import EmotionalTrackerPanel from './panels/emotional-tracker-panel';
 import TranscriptPanel from './panels/transcript-panel';
 import ScamMapPanel from './panels/scam-map-panel';
 import ProfilePanel from './panels/profile-panel';
+import ReportPanel from './panels/report-panel';
 
 export default function Dashboard() {
   const { isCallActive, activePanel } = useContext(AppContext);
@@ -37,6 +38,8 @@ export default function Dashboard() {
         return <TranscriptPanel />;
       case 'scam-map':
         return <ScamMapPanel />;
+      case 'report':
+        return <ReportPanel />;
       case 'settings':
         return <SettingsPanel />;
       default:

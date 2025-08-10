@@ -23,7 +23,7 @@ export default function HomePanel() {
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [currentCall, setCurrentCall] = useState<CallLog | null>(null);
-  const audioCache = useRef<Record<number, string>>({});
+  const audioCache = useRef<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -275,3 +275,4 @@ export default function HomePanel() {
     
 
     
+

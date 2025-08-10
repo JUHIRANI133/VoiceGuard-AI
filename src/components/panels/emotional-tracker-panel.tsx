@@ -37,7 +37,6 @@ export default function EmotionalTrackerPanel() {
     setCurrentCall(call);
     setIsAudioPlayerOpen(true);
     setAudioDataUri(null);
-    setIsLoadingAudio(true);
     
     if (call.audioDataUri) {
         setAudioDataUri(call.audioDataUri);
@@ -51,6 +50,7 @@ export default function EmotionalTrackerPanel() {
       return;
     }
     
+    setIsLoadingAudio(true);
     try {
       const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice || 'algenib' });
       audioCache.current[call.id as string] = audioDataUri;
@@ -154,5 +154,3 @@ export default function EmotionalTrackerPanel() {
     </>
   );
 }
-
-    

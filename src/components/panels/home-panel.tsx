@@ -32,9 +32,7 @@ export default function HomePanel() {
     setCurrentCall(call);
     setIsAudioPlayerOpen(true);
     setAudioDataUri(null);
-    setIsLoadingAudio(true);
 
-    // If the call is an uploaded file, it will have its own data URI.
     if (call.audioDataUri) {
         setAudioDataUri(call.audioDataUri);
         setIsLoadingAudio(false);
@@ -47,6 +45,7 @@ export default function HomePanel() {
       return;
     }
 
+    setIsLoadingAudio(true);
     try {
       const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice || 'algenib' });
       audioCache.current[call.id as string] = audioDataUri;
@@ -265,6 +264,3 @@ export default function HomePanel() {
       </Dialog>
     </>
   );
-
-    
-    

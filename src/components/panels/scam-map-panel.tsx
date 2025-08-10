@@ -1,13 +1,16 @@
 
 "use client";
 
+import { useContext } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { callHistory, callDescriptions } from "@/lib/mock-data";
+import { AppContext } from '@/contexts/app-context';
+import { callDescriptions } from "@/lib/mock-data";
 import { AlertTriangle } from 'lucide-react';
 
-const scamCalls = callHistory.filter(call => call.risk === 'high' || call.risk === 'medium');
-
 export default function ScamMapPanel() {
+  const { callHistory } = useContext(AppContext);
+  const scamCalls = callHistory.filter(call => call.risk === 'high' || call.risk === 'medium');
+
   return (
     <div className="h-full flex flex-col gap-6 animate-text-fade-in">
       <div>

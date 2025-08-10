@@ -12,33 +12,30 @@ import { generateSpeech } from '@/ai/flows/text-to-speech';
 import { ScrollArea } from '../ui/scroll-area';
 import { AppContext } from '@/contexts/app-context';
 import { useContext } from 'react';
-import { callHistory } from '@/lib/mock-data';
+import type { CallLog } from '@/types';
 import { Input } from '../ui/input';
 import { useToast } from '@/hooks/use-toast';
 
 export default function HomePanel() {
-  const { startMockCall, uploadAudioFile, setActivePanel } = useContext(AppContext);
+  const { callHistory, startMockCall, uploadAudioFile, setActivePanel } = useContext(AppContext);
   const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [currentCall, setCurrentCall] = useState<(typeof callHistory)[0] | null>(null);
+  const [currentCall, setCurrentCall] = useState<CallLog | null>(null);
   const audioCache = useRef<Record<number, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
 
-  const handlePlayAudio = async (call: typeof callHistory[0]) => {
+  const handlePlayAudio = async (call: CallLog) => {
     setCurrentCall(call);
     setIsAudioPlayerOpen(true);
     setAudioDataUri(null);
 
-    // Special case for the first call log to play the "uploaded" audio.
-    if (call.id === 1) {
-        // In a real app, this would point to the actual uploaded file's URL or data URI.
-        // For this mock, we'll use a valid placeholder audio file.
-        const mockUploadedAudioUri = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAAAAA";
-        setAudioDataUri(mockUploadedAudioUri);
+    // If the call is an uploaded file, it will have its own data URI.
+    if (call.audioDataUri) {
+        setAudioDataUri(call.audioDataUri);
         setIsLoadingAudio(false);
         return;
     }
@@ -51,7 +48,7 @@ export default function HomePanel() {
 
     setIsLoadingAudio(true);
     try {
-      const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice });
+      const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice || 'algenib' });
       audioCache.current[call.id] = audioDataUri;
       setAudioDataUri(audioDataUri);
     } catch (error) {
@@ -67,7 +64,7 @@ export default function HomePanel() {
     }
   };
 
-  const handleShowTranscript = (call: typeof callHistory[0]) => {
+  const handleShowTranscript = (call: CallLog) => {
     setCurrentCall(call);
     setIsTranscriptOpen(true);
   };
@@ -82,9 +79,8 @@ export default function HomePanel() {
       uploadAudioFile(file);
       toast({
           title: "File Uploaded",
-          description: `${file.name} is now available in the 'Uploaded Audio' panel.`,
+          description: `${file.name} is being processed and will appear in the call history.`,
       });
-      setActivePanel('uploaded-audio');
     }
   };
 
@@ -140,7 +136,7 @@ export default function HomePanel() {
               <Button size="lg" variant="outline" className="w-full font-bold glassmorphic border-primary text-primary hover:shadow-[0_0_15px_hsl(var(--primary))] hover:border-primary/80 hover:text-white" onClick={handleUploadClick}>
                   <Upload className="mr-2" /> Upload Audio
               </Button>
-              <Input type="file" ref={fileInputRef} onChange={handleFileChange} accept="audio/mp3, audio/wav" className="hidden" />
+              <Input type="file" ref={fileInputRef} onChange={handleFileChange} accept="audio/mp3, audio/wav, audio/mpeg" className="hidden" />
             </CardFooter>
           </Card>
         </div>

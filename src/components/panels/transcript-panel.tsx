@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useContext } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Accordion,
@@ -10,7 +11,8 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { callHistory, callDescriptions } from "@/lib/mock-data";
+import { AppContext } from '@/contexts/app-context';
+import { callDescriptions } from "@/lib/mock-data";
 import { AlertTriangle, CheckCircle, Heart, Bot, Smile, Annoyed, Bomb, FileText, Frown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
@@ -61,6 +63,7 @@ const renderTranscript = (transcript: string, contact: string) => {
 
 
 export default function TranscriptPanel() {
+  const { callHistory } = useContext(AppContext);
   return (
     <div className="h-full flex flex-col gap-6 animate-text-fade-in">
       <div>

@@ -1,14 +1,15 @@
 
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Clock, PlayCircle, Loader, Volume2, Smile, Frown, Annoyed, Heart, Bomb, Bot } from 'lucide-react';
 import { Button } from '@/components/button';
-import { callHistory } from '@/lib/mock-data';
+import { AppContext } from '@/contexts/app-context';
+import type { CallLog } from '@/types';
 import { generateSpeech } from '@/ai/flows/text-to-speech';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -24,17 +25,24 @@ const emotionIcons: { [key: string]: { icon: React.ElementType, color: string } 
 };
 
 export default function EmotionalTrackerPanel() {
+  const { callHistory } = useContext(AppContext);
   const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [currentCall, setCurrentCall] = useState<(typeof callHistory)[0] | null>(null);
+  const [currentCall, setCurrentCall] = useState<CallLog | null>(null);
   const audioCache = useRef<Record<number, string>>({});
   const { toast } = useToast();
 
-  const handlePlayAudio = async (call: typeof callHistory[0]) => {
+  const handlePlayAudio = async (call: CallLog) => {
     setCurrentCall(call);
     setIsAudioPlayerOpen(true);
     setAudioDataUri(null);
+    
+    if (call.audioDataUri) {
+        setAudioDataUri(call.audioDataUri);
+        setIsLoadingAudio(false);
+        return;
+    }
 
     if (audioCache.current[call.id]) {
       setAudioDataUri(audioCache.current[call.id]);
@@ -44,7 +52,7 @@ export default function EmotionalTrackerPanel() {
 
     setIsLoadingAudio(true);
     try {
-      const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice });
+      const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice || 'algenib' });
       audioCache.current[call.id] = audioDataUri;
       setAudioDataUri(audioDataUri);
     } catch (error) {

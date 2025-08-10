@@ -1,13 +1,14 @@
+
 "use client";
 
 import React, { createContext, useState, useRef, useCallback } from 'react';
-import type { AppState, AppContextType, UploadedFile } from '@/types';
-import { callHistory } from '@/lib/mock-data';
+import type { AppState, AppContextType, UploadedFile, CallLog } from '@/types';
+import { initialCallHistory } from '@/lib/mock-data';
 
 const mockUploadedAudio: UploadedFile[] = [
-    { id: 1, name: 'meeting_recording_01.wav', duration: '15:30', transcript: 'This is a sample transcript for the first meeting recording...', isRenaming: false },
-    { id: 2, name: 'voicemail_from_client.mp3', duration: '0:45', transcript: 'Hi, this is a voicemail from your client...', isRenaming: false },
-    { id: 3, name: 'lecture_capture_comp-sci.mp3', duration: '45:12', transcript: 'Welcome to the computer science lecture. Today we will be discussing...', isRenaming: false }
+    { id: 1, name: 'meeting_recording_01.wav', duration: '15:30', transcript: 'This is a sample transcript for the first meeting recording...', isRenaming: false, audioDataUri: null },
+    { id: 2, name: 'voicemail_from_client.mp3', duration: '0:45', transcript: 'Hi, this is a voicemail from your client...', isRenaming: false, audioDataUri: null },
+    { id: 3, name: 'lecture_capture_comp-sci.mp3', duration: '45:12', transcript: 'Welcome to the computer science lecture. Today we will be discussing...', isRenaming: false, audioDataUri: null }
 ];
 
 const initialState: AppState = {
@@ -29,6 +30,7 @@ const initialState: AppState = {
   },
   riskLevel: 'low',
   uploadedFiles: mockUploadedAudio,
+  callHistory: initialCallHistory,
 };
 
 export const AppContext = createContext<AppContextType>({
@@ -38,6 +40,7 @@ export const AppContext = createContext<AppContextType>({
   endCall: () => {},
   uploadAudioFile: () => {},
   setUploadedFiles: () => {},
+  setCallHistory: () => {},
 });
 
 const parseTranscript = (transcript: string, contact: string) => {
@@ -82,8 +85,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const startMockCall = () => {
-    // Select a random call from history
-    const randomCall = callHistory[Math.floor(Math.random() * callHistory.length)];
+    const randomCall = state.callHistory[Math.floor(Math.random() * state.callHistory.length)];
     mockCallSegments.current = parseTranscript(randomCall.transcript, randomCall.contact);
     
     setState((prevState) => ({
@@ -150,29 +152,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const uploadAudioFile = (file: File) => {
-    // This is a mock implementation.
-    // In a real app, you would process the audio file here.
-    const newFile: UploadedFile = {
-        id: state.uploadedFiles.length + 1,
-        name: file.name,
-        duration: "0:00", // This would be calculated from the audio file
-        transcript: `(Transcript for ${file.name} would be generated here)`,
-        isRenaming: false,
-    };
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const audioDataUri = e.target?.result as string;
+      const audio = new Audio(audioDataUri);
+      audio.onloadedmetadata = () => {
+        const duration = audio.duration;
+        const newCallLog: CallLog = {
+          id: state.callHistory.length + 1,
+          type: 'Uploaded',
+          contact: file.name,
+          duration: `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}`,
+          date: new Date().toISOString().split('T')[0],
+          risk: 'low',
+          emotion: 'Casual',
+          transcript: `(Transcript for ${file.name} would be generated here)`,
+          audioDataUri,
+        };
 
-    setState(prevState => ({
-        ...prevState,
-        uploadedFiles: [...prevState.uploadedFiles, newFile],
-    }));
+        setState(prevState => ({
+          ...prevState,
+          callHistory: [newCallLog, ...prevState.callHistory],
+        }));
+      };
+    };
+    reader.readAsDataURL(file);
   };
   
   const setUploadedFiles = (files: UploadedFile[]) => {
       setState(prevState => ({ ...prevState, uploadedFiles: files }));
   }
 
+  const setCallHistory = (callHistory: CallLog[]) => {
+    setState(prevState => ({ ...prevState, callHistory }));
+  }
+
 
   return (
-    <AppContext.Provider value={{ ...state, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles }}>
+    <AppContext.Provider value={{ ...state, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory }}>
       {children}
     </AppContext.Provider>
   );

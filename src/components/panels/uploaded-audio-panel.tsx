@@ -1,22 +1,27 @@
 
 "use client";
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { FileAudio, Clock, Pencil, FileText, Check, X } from 'lucide-react';
+import { FileAudio, Clock, Pencil, FileText, Check, X, Upload, PlayCircle, Loader, Volume2 } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { AppContext } from '@/contexts/app-context';
 import type { UploadedFile } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 
 export default function UploadedAudioPanel() {
-    const { uploadedFiles, setUploadedFiles } = useContext(AppContext);
+    const { uploadedFiles, setUploadedFiles, uploadAudioFile } = useContext(AppContext);
     const [transcriptToShow, setTranscriptToShow] = useState<string | null>(null);
     const [editingName, setEditingName] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { toast } = useToast();
+    const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
+    const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
 
     const handleRenameClick = (audio: UploadedFile) => {
         setUploadedFiles(uploadedFiles.map(a => a.id === audio.id ? { ...a, isRenaming: true } : { ...a, isRenaming: false }));
@@ -34,6 +39,34 @@ export default function UploadedAudioPanel() {
     const handleShowTranscript = (transcript: string) => {
         setTranscriptToShow(transcript);
     };
+    
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+          uploadAudioFile(file);
+          toast({
+              title: "File Uploaded",
+              description: `${file.name} is being processed and will appear in the call history.`,
+          });
+        }
+    };
+
+    const handlePlayAudio = (audio: UploadedFile) => {
+        if(audio.audioDataUri) {
+            setAudioDataUri(audio.audioDataUri);
+            setIsAudioPlayerOpen(true);
+        } else {
+            toast({
+                title: "Audio Not Available",
+                description: "The audio for this file has not been processed yet.",
+                variant: "destructive"
+            });
+        }
+    }
 
   return (
     <>
@@ -43,8 +76,13 @@ export default function UploadedAudioPanel() {
                 <p className="text-muted-foreground">Manage and analyze your uploaded audio files.</p>
             </div>
             <Card className="glassmorphic-card holographic-noise flex-grow flex flex-col">
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>My Audio Files</CardTitle>
+                    <Button variant="outline" className="glassmorphic border-primary text-primary" onClick={handleUploadClick}>
+                        <Upload className="mr-2 h-4 w-4"/>
+                        Upload New File
+                    </Button>
+                    <Input type="file" ref={fileInputRef} onChange={handleFileChange} accept="audio/*" className="hidden" />
                 </CardHeader>
                 <CardContent className="flex-grow">
                     <Table>
@@ -85,6 +123,9 @@ export default function UploadedAudioPanel() {
                                             </>
                                         ) : (
                                             <>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePlayAudio(audio)}>
+                                                    <PlayCircle className="text-muted-foreground hover:text-primary" />
+                                                </Button>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRenameClick(audio)}>
                                                     <Pencil className="text-muted-foreground hover:text-primary" />
                                                 </Button>
@@ -114,6 +155,25 @@ export default function UploadedAudioPanel() {
                         {transcriptToShow}
                     </div>
                 </ScrollArea>
+            </DialogContent>
+        </Dialog>
+        <Dialog open={isAudioPlayerOpen} onOpenChange={setIsAudioPlayerOpen}>
+            <DialogContent className="glassmorphic-card">
+              <DialogHeader>
+                <DialogTitle>Playing Audio</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center justify-center p-8">
+                {audioDataUri ? (
+                    <div className="flex flex-col items-center gap-4">
+                        <Volume2 className="w-12 h-12 text-primary" />
+                        <audio src={audioDataUri} controls autoPlay onEnded={() => setIsAudioPlayerOpen(false)}>
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                ) : (
+                  <p className="text-destructive">Could not load audio.</p>
+                )}
+              </div>
             </DialogContent>
         </Dialog>
     </>

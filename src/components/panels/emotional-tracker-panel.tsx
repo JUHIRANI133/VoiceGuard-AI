@@ -30,13 +30,14 @@ export default function EmotionalTrackerPanel() {
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [currentCall, setCurrentCall] = useState<CallLog | null>(null);
-  const audioCache = useRef<Record<number, string>>({});
+  const audioCache = useRef<Record<string, string>>({});
   const { toast } = useToast();
 
   const handlePlayAudio = async (call: CallLog) => {
     setCurrentCall(call);
     setIsAudioPlayerOpen(true);
     setAudioDataUri(null);
+    setIsLoadingAudio(true);
     
     if (call.audioDataUri) {
         setAudioDataUri(call.audioDataUri);
@@ -49,11 +50,10 @@ export default function EmotionalTrackerPanel() {
       setIsLoadingAudio(false);
       return;
     }
-
-    setIsLoadingAudio(true);
+    
     try {
       const { audioDataUri } = await generateSpeech({ text: call.transcript, voice: call.voice || 'algenib' });
-      audioCache.current[call.id] = audioDataUri;
+      audioCache.current[call.id as string] = audioDataUri;
       setAudioDataUri(audioDataUri);
     } catch (error) {
       console.error("Failed to generate speech:", error);
@@ -154,3 +154,5 @@ export default function EmotionalTrackerPanel() {
     </>
   );
 }
+
+    

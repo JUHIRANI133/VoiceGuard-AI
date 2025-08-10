@@ -9,6 +9,7 @@ import LiveCallPanel from '@/components/panels/live-call-panel';
 import SettingsPanel from '@/components/panels/settings-panel';
 import FloatingWidget from '@/components/floating-widget';
 import ContactsPanel from './panels/contacts-panel';
+import UploadedAudioPanel from './panels/uploaded-audio-panel';
 import EmotionalTrackerPanel from './panels/emotional-tracker-panel';
 import TranscriptPanel from './panels/transcript-panel';
 import ScamMapPanel from './panels/scam-map-panel';
@@ -28,6 +29,8 @@ export default function Dashboard() {
         return <ProfilePanel />;
       case 'contacts':
         return <ContactsPanel />;
+      case 'uploaded-audio':
+        return <UploadedAudioPanel />;
       case 'emotional-tracker':
         return <EmotionalTrackerPanel />;
       case 'transcript':

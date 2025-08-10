@@ -11,6 +11,7 @@ import { Button } from '@/components/button';
 import { callHistory } from '@/lib/mock-data';
 import { generateSpeech } from '@/ai/flows/text-to-speech';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 
 const emotionIcons: { [key: string]: { icon: React.ElementType, color: string } } = {
@@ -28,6 +29,7 @@ export default function EmotionalTrackerPanel() {
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [currentCall, setCurrentCall] = useState<(typeof callHistory)[0] | null>(null);
   const audioCache = useRef<Record<number, string>>({});
+  const { toast } = useToast();
 
   const handlePlayAudio = async (call: typeof callHistory[0]) => {
     setCurrentCall(call);
@@ -47,6 +49,11 @@ export default function EmotionalTrackerPanel() {
       setAudioDataUri(audioDataUri);
     } catch (error) {
       console.error("Failed to generate speech:", error);
+      toast({
+        title: "Audio Generation Failed",
+        description: "Could not generate audio for this call. You may have exceeded the API rate limit.",
+        variant: "destructive"
+      });
       setAudioDataUri(null);
     } finally {
       setIsLoadingAudio(false);

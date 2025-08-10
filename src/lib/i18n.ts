@@ -8,6 +8,7 @@ export const translations = {
     sidebarEmotionalTracker: "Emotional Tracker",
     sidebarTranscript: "Transcript",
     sidebarScamMap: "Scam Map",
+    sidebarAbout: "About the App",
     sidebarSettings: "Settings",
     sidebarTagline: "Your guardian against digital deception",
     
@@ -73,6 +74,7 @@ export const translations = {
     sidebarEmotionalTracker: "भावनात्मक ट्रैकर",
     sidebarTranscript: "प्रतिलिपि",
     sidebarScamMap: "घोटाला मानचित्र",
+    sidebarAbout: "ऐप के बारे में",
     sidebarSettings: "सेटिंग्स",
     sidebarTagline: "डिजिटल धोखे के खिलाफ आपका अभिभावक",
 
@@ -138,6 +140,7 @@ export const translations = {
     sidebarEmotionalTracker: "Rastreador Emocional",
     sidebarTranscript: "Transcripción",
     sidebarScamMap: "Mapa de Estafas",
+    sidebarAbout: "Acerca de la App",
     sidebarSettings: "Configuración",
     sidebarTagline: "Tu guardián contra el engaño digital",
 
@@ -203,6 +206,7 @@ export const translations = {
     sidebarEmotionalTracker: "Suivi Émotionnel",
     sidebarTranscript: "Transcription",
     sidebarScamMap: "Carte des Arnaques",
+    sidebarAbout: "À propos de l'application",
     sidebarSettings: "Paramètres",
     sidebarTagline: "Votre gardien contre la tromperie numérique",
 

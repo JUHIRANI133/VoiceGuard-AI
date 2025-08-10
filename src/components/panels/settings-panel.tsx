@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Shield, Bell, Globe, PhoneIncoming, Siren, Users, KeyRound, PlusCircle, Trash2, Edit, Palette, Sun, Moon } from "lucide-react";
+import { Shield, Bell, Globe, PhoneIncoming, Siren, Users, KeyRound, PlusCircle, Trash2, Edit, Palette, Sun, Moon, MapPin, LocateFixed, Navigation } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -162,6 +162,42 @@ export default function SettingsPanel() {
                         <SelectItem value="fr">Français</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+          
+          <AccordionItem value="item-4" className="border-none">
+            <Card className="glassmorphic-card border-primary/20">
+              <AccordionTrigger className="p-6 hover:no-underline">
+                <CardHeader className="p-0 text-left">
+                  <CardTitle className="flex items-center gap-2"><MapPin className="text-primary"/> {t('preventionTitle')}</CardTitle>
+                  <CardDescription>{t('preventionDescription')}</CardDescription>
+                </CardHeader>
+              </AccordionTrigger>
+              <AccordionContent>
+                <CardContent className="space-y-6 pt-0">
+                  <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                    <div className="flex items-center gap-3">
+                      <Navigation className="w-5 h-5 text-primary" />
+                      <Label htmlFor="send-gps">{t('sendGpsLabel')}</Label>
+                    </div>
+                    <Switch id="send-gps" />
+                  </div>
+                  <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                    <div className="flex items-center gap-3">
+                      <Siren className="w-5 h-5 text-primary" />
+                      <Label htmlFor="contact-police">{t('contactPoliceLabel')}</Label>
+                    </div>
+                    <Switch id="contact-police" />
+                  </div>
+                  <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                    <div className="flex items-center gap-3">
+                      <LocateFixed className="w-5 h-5 text-primary" />
+                      <Label htmlFor="detect-location">{t('detectLocationLabel')}</Label>
+                    </div>
+                    <Switch id="detect-location" />
                   </div>
                 </CardContent>
               </AccordionContent>

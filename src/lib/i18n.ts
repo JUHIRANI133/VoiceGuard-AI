@@ -33,6 +33,12 @@ export const translations = {
     hapticFeedbackLabel: "Haptic Feedback",
     languageLabel: "Language",
     saveChangesButton: "Save Changes",
+
+    preventionTitle: "Prevention",
+    preventionDescription: "Manage prevention and response settings.",
+    sendGpsLabel: "Send Live GPS Location",
+    contactPoliceLabel: "Automatically Contact Police",
+    detectLocationLabel: "Detect Caller Location",
   },
   hi: {
     sidebarHome: "होम",
@@ -67,6 +73,12 @@ export const translations = {
     hapticFeedbackLabel: "हैप्टिक फीडबैक",
     languageLabel: "भाषा",
     saveChangesButton: "परिवर्तन सहेजें",
+    
+    preventionTitle: "निवारण",
+    preventionDescription: "निवारण और प्रतिक्रिया सेटिंग्स प्रबंधित करें।",
+    sendGpsLabel: "लाइव जीपीएस स्थान भेजें",
+    contactPoliceLabel: "स्वचालित रूप से पुलिस से संपर्क करें",
+    detectLocationLabel: "कॉलर का स्थान पता लगाएँ",
   },
   es: {
     sidebarHome: "Inicio",
@@ -101,6 +113,12 @@ export const translations = {
     hapticFeedbackLabel: "Respuesta Háptica",
     languageLabel: "Idioma",
     saveChangesButton: "Guardar Cambios",
+    
+    preventionTitle: "Prevención",
+    preventionDescription: "Gestionar la configuración de prevención y respuesta.",
+    sendGpsLabel: "Enviar ubicación GPS en vivo",
+    contactPoliceLabel: "Contactar a la policía automáticamente",
+    detectLocationLabel: "Detectar la ubicación de la persona que llama",
   },
   fr: {
     sidebarHome: "Accueil",
@@ -135,5 +153,11 @@ export const translations = {
     hapticFeedbackLabel: "Retour Haptique",
     languageLabel: "Langue",
     saveChangesButton: "Enregistrer les modifications",
+
+    preventionTitle: "La prévention",
+    preventionDescription: "Gérer les paramètres de prévention et de réponse.",
+    sendGpsLabel: "Envoyer la position GPS en direct",
+    contactPoliceLabel: "Contacter automatiquement la police",
+    detectLocationLabel: "Détecter l'emplacement de l'appelant",
   },
 };

@@ -1,72 +1,124 @@
+
 "use client";
 
-import { useContext } from 'react';
-import { AppContext } from '@/contexts/app-context';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import RiskMeter from '@/components/ui/risk-meter';
-import { Shield, PhoneIncoming, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Mic, Upload, Phone, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+
+// Mock data for call history
+const callHistory = [
+  { id: 1, type: 'Incoming', contact: 'Rohan Kumar', duration: '5:21', date: '2024-07-28', risk: 'high' },
+  { id: 2, type: 'Outgoing', contact: 'Aanya Sharma', duration: '12:45', date: '2024-07-28', risk: 'low' },
+  { id: 3, type: 'Incoming', contact: 'Unknown', duration: '2:03', date: '2024-07-27', risk: 'medium' },
+  { id: 4, type: 'Incoming', contact: 'Aditya Verma', duration: '8:11', date: '2024-07-26', risk: 'low' },
+];
 
 export default function HomePanel() {
-  const { startMockCall } = useContext(AppContext);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-8 text-center animate-text-fade-in">
-      <div className="flex flex-col items-center gap-4">
-        <RiskMeter riskLevel="low" />
-        <h1 className="text-4xl font-bold tracking-tighter md:text-5xl animate-text-fade-in" style={{animationDelay: '100ms'}}>System Secure</h1>
-        <p className="max-w-md text-muted-foreground animate-text-fade-in" style={{animationDelay: '200ms'}}>
-          VoiceGuard AI is actively monitoring for threats. Your calls are protected in real-time.
+    <div className="flex flex-col h-full gap-6 animate-text-fade-in">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tighter">Home</h1>
+        <p className="text-muted-foreground">
+          Record, upload, or review your calls for security analysis.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 w-full max-w-4xl animate-text-fade-in" style={{animationDelay: '300ms'}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="glassmorphic-card holographic-noise shine-sweep">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Protection</CardTitle>
-            <Shield className="w-5 h-5 text-primary" />
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mic className="text-primary"/>
+              Record a Call
+            </CardTitle>
+            <CardDescription>
+              Start a new recording to analyze a live conversation in real-time.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-glow-cyan">Cloud Mode</div>
-            <p className="text-xs text-muted-foreground">
-              Maximum detection accuracy
+            <p className="text-sm text-muted-foreground">
+              Click the button below to begin recording your microphone. All analysis will be performed securely.
             </p>
           </CardContent>
+          <CardFooter>
+            <Button size="lg" className="w-full font-bold">
+              <Mic className="mr-2" /> Start Recording
+            </Button>
+          </CardFooter>
         </Card>
+
         <Card className="glassmorphic-card holographic-noise shine-sweep">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Scams Blocked (7d)</CardTitle>
-            <AlertTriangle className="w-5 h-5 text-risk-danger" />
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="text-primary"/>
+              Input an Audio File
+            </CardTitle>
+            <CardDescription>
+              Upload a pre-recorded audio file (.mp3, .wav) for a detailed scam analysis.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" style={{color: 'hsl(var(--color-risk-danger))'}}>12</div>
-            <p className="text-xs text-muted-foreground">
-              vs. 3 last week
+             <p className="text-sm text-muted-foreground">
+              Your files are processed securely and are not stored after analysis is complete.
             </p>
           </CardContent>
-        </Card>
-        <Card className="glassmorphic-card holographic-noise shine-sweep">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Calls Scanned (7d)</CardTitle>
-            <CheckCircle className="w-5 h-5 text-risk-safe" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" style={{color: 'hsl(var(--color-risk-safe))'}}>87</div>
-            <p className="text-xs text-muted-foreground">
-              All other calls were safe
-            </p>
-          </CardContent>
+          <CardFooter>
+             <Button size="lg" variant="outline" className="w-full font-bold glassmorphic border-primary text-primary hover:shadow-[0_0_15px_hsl(var(--primary))] hover:border-primary/80 hover:text-white">
+                <Upload className="mr-2" /> Upload Audio
+            </Button>
+          </CardFooter>
         </Card>
       </div>
 
-      <Button 
-        onClick={startMockCall}
-        size="lg"
-        className="text-lg font-bold text-background bg-primary hover:bg-primary/90 rounded-full px-8 py-6 shadow-[0_0_20px_hsl(var(--primary))] animate-text-fade-in" style={{animationDelay: '400ms'}}
-      >
-        <PhoneIncoming className="w-6 h-6 mr-3" />
-        Simulate Incoming Call
-      </Button>
+      <Card className="glassmorphic-card holographic-noise flex-grow flex flex-col">
+        <CardHeader>
+          <CardTitle>Call History</CardTitle>
+          <CardDescription>
+            Review your recent calls and their risk analysis.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex-grow">
+           <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Type</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Duration</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Risk Level</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {callHistory.map((call) => (
+                <TableRow key={call.id}>
+                  <TableCell className="font-medium flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-muted-foreground"/> {call.type}
+                  </TableCell>
+                  <TableCell>{call.contact}</TableCell>
+                  <TableCell className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground"/> {call.duration}
+                  </TableCell>
+                  <TableCell>{call.date}</TableCell>
+                  <TableCell className="text-right">
+                    <Badge variant={call.risk === 'high' ? 'destructive' : call.risk === 'medium' ? 'secondary' : 'default'}
+                           className={
+                            call.risk === 'high' ? 'bg-risk-danger/20 text-risk-danger border-risk-danger/30' :
+                            call.risk === 'medium' ? 'bg-risk-caution/20 text-risk-caution border-risk-caution/30' :
+                            'bg-risk-safe/20 text-risk-safe border-risk-safe/30'
+                           }>
+                        {call.risk === 'high' && <AlertTriangle className="w-3 h-3 mr-1"/>}
+                        {call.risk === 'low' && <CheckCircle className="w-3 h-3 mr-1"/>}
+                        {call.risk.charAt(0).toUpperCase() + call.risk.slice(1)}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

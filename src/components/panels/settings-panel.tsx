@@ -18,12 +18,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { AppContext } from '@/contexts/app-context';
-import type { EmergencyContact } from '@/types';
+import type { EmergencyContact, Language } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 
 export default function SettingsPanel() {
-  const { emergencyContacts, addEmergencyContact, removeEmergencyContact, appPin, setAppPin } = useContext(AppContext);
+  const { emergencyContacts, addEmergencyContact, removeEmergencyContact, appPin, setAppPin, t, language, setLanguage } = useContext(AppContext);
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
   const [newContact, setNewContact] = useState({ name: '', relation: '', phone: '', profession: '' });
@@ -59,8 +59,8 @@ export default function SettingsPanel() {
     <>
       <div className="h-full flex flex-col gap-6 animate-text-fade-in">
         <div>
-          <h1 className="text-3xl font-bold tracking-tighter">Settings</h1>
-          <p className="text-muted-foreground">Customize your VoiceGuard AI experience.</p>
+          <h1 className="text-3xl font-bold tracking-tighter">{t('settingsTitle')}</h1>
+          <p className="text-muted-foreground">{t('settingsDescription')}</p>
         </div>
 
         <Accordion type="single" collapsible className="w-full space-y-6">
@@ -68,8 +68,8 @@ export default function SettingsPanel() {
             <Card className="glassmorphic-card border-primary/20">
               <AccordionTrigger className="p-6 hover:no-underline">
                 <CardHeader className="p-0 text-left">
-                  <CardTitle className="flex items-center gap-2"><Shield className="text-primary"/> Protection</CardTitle>
-                  <CardDescription>Manage your security and emergency settings.</CardDescription>
+                  <CardTitle className="flex items-center gap-2"><Shield className="text-primary"/> {t('protectionTitle')}</CardTitle>
+                  <CardDescription>{t('protectionDescription')}</CardDescription>
                 </CardHeader>
               </AccordionTrigger>
               <AccordionContent>
@@ -77,30 +77,30 @@ export default function SettingsPanel() {
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
                     <div className="flex items-center gap-3">
                       <PhoneIncoming className="w-5 h-5 text-primary" />
-                      <Label htmlFor="record-unknown">Turn on recording for unknown numbers</Label>
+                      <Label htmlFor="record-unknown">{t('recordUnknownLabel')}</Label>
                     </div>
                     <Switch id="record-unknown" defaultChecked/>
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
                     <div className="flex items-center gap-3">
                       <Siren className="w-5 h-5 text-primary" />
-                      <Label htmlFor="sos-alert">Send S.O.S alert to emergency contacts</Label>
+                      <Label htmlFor="sos-alert">{t('sosAlertLabel')}</Label>
                     </div>
                     <Switch id="sos-alert" />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
                     <div className="flex items-center gap-3">
                       <Users className="w-5 h-5 text-primary" />
-                      <Label>Edit emergency contact</Label>
+                      <Label>{t('editEmergencyContactLabel')}</Label>
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => setIsContactsModalOpen(true)}>Edit</Button>
+                    <Button variant="outline" size="sm" onClick={() => setIsContactsModalOpen(true)}>{t('editButton')}</Button>
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
                     <div className="flex items-center gap-3">
                       <KeyRound className="w-5 h-5 text-primary" />
-                      <Label>{appPin ? 'Change PIN' : 'Add PIN to the app'}</Label>
+                      <Label>{appPin ? t('changePinLabel') : t('addPinLabel')}</Label>
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => setIsPinModalOpen(true)}>{appPin ? 'Edit PIN' : 'Add PIN'}</Button>
+                    <Button variant="outline" size="sm" onClick={() => setIsPinModalOpen(true)}>{appPin ? t('editButton') : t('addButton')}</Button>
                   </div>
                 </CardContent>
               </AccordionContent>
@@ -111,8 +111,8 @@ export default function SettingsPanel() {
             <Card className="glassmorphic-card border-primary/20">
               <AccordionTrigger className="p-6 hover:no-underline">
                 <CardHeader className="p-0 text-left">
-                  <CardTitle className="flex items-center gap-2"><Palette className="text-primary"/> Appearance</CardTitle>
-                  <CardDescription>Customize the look and feel of the app.</CardDescription>
+                  <CardTitle className="flex items-center gap-2"><Palette className="text-primary"/> {t('appearanceTitle')}</CardTitle>
+                  <CardDescription>{t('appearanceDescription')}</CardDescription>
                 </CardHeader>
               </AccordionTrigger>
               <AccordionContent>
@@ -121,7 +121,7 @@ export default function SettingsPanel() {
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
                         {theme === 'dark' ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
-                        <Label htmlFor="dark-mode">Dark Mode</Label>
+                        <Label htmlFor="dark-mode">{t('darkModeLabel')}</Label>
                       </div>
                     </div>
                     <Switch id="dark-mode" checked={theme === 'dark'} onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}/>
@@ -135,23 +135,23 @@ export default function SettingsPanel() {
             <Card className="glassmorphic-card border-primary/20">
               <AccordionTrigger className="p-6 hover:no-underline">
                 <CardHeader className="p-0 text-left">
-                  <CardTitle className="flex items-center gap-2"><Bell className="text-primary"/> Alerts & Language</CardTitle>
-                  <CardDescription>Manage notifications and language preferences.</CardDescription>
+                  <CardTitle className="flex items-center gap-2"><Bell className="text-primary"/> {t('alertsAndLanguageTitle')}</CardTitle>
+                  <CardDescription>{t('alertsAndLanguageDescription')}</CardDescription>
                 </CardHeader>
               </AccordionTrigger>
               <AccordionContent>
                 <CardContent className="space-y-6 pt-0">
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
-                    <Label htmlFor="alert-sound">Alert Sound</Label>
+                    <Label htmlFor="alert-sound">{t('alertSoundLabel')}</Label>
                     <Switch id="alert-sound" defaultChecked />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
-                    <Label htmlFor="haptic-feedback">Haptic Feedback</Label>
+                    <Label htmlFor="haptic-feedback">{t('hapticFeedbackLabel')}</Label>
                     <Switch id="haptic-feedback" />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
-                    <Label htmlFor="language"><Globe className="inline-block mr-2 h-4 w-4"/> Language</Label>
-                    <Select defaultValue="en">
+                    <Label htmlFor="language"><Globe className="inline-block mr-2 h-4 w-4"/> {t('languageLabel')}</Label>
+                    <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
                       <SelectTrigger id="language" className="w-[180px] glassmorphic">
                         <SelectValue placeholder="Select language" />
                       </SelectTrigger>
@@ -170,7 +170,7 @@ export default function SettingsPanel() {
         </Accordion>
         
         <div className="flex justify-end mt-auto">
-          <Button className="font-bold">Save Changes</Button>
+          <Button className="font-bold">{t('saveChangesButton')}</Button>
         </div>
       </div>
 

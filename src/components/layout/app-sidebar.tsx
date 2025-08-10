@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useContext } from 'react';
@@ -13,20 +14,28 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { AppContext } from '@/contexts/app-context';
 import { cn } from '@/lib/utils';
+import { translations } from '@/lib/i18n';
 
 export default function AppSidebar() {
-  const { activePanel, setActivePanel, isCallActive } = useContext(AppContext);
+  const { activePanel, setActivePanel, isCallActive, t, language } = useContext(AppContext);
 
   const menuItems = [
-    { id: 'home', label: 'Home', icon: LayoutDashboard },
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'contacts', label: 'Contacts', icon: Contact },
-    { id: 'uploaded-audio', label: 'Uploaded Audio', icon: UploadCloud },
-    { id: 'emotional-tracker', label: 'Emotional Tracker', icon: HeartPulse },
-    { id: 'transcript', label: 'Transcript', icon: FileText },
-    { id: 'scam-map', label: 'Scam Map', icon: Map },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'home', label: t('sidebarHome'), icon: LayoutDashboard },
+    { id: 'profile', label: t('sidebarProfile'), icon: User },
+    { id: 'contacts', label: t('sidebarContacts'), icon: Contact },
+    { id: 'uploaded-audio', label: t('sidebarUploadedAudio'), icon: UploadCloud },
+    { id: 'emotional-tracker', label: t('sidebarEmotionalTracker'), icon: HeartPulse },
+    { id: 'transcript', label: t('sidebarTranscript'), icon: FileText },
+    { id: 'scam-map', label: t('sidebarScamMap'), icon: Map },
+    { id: 'settings', label: t('sidebarSettings'), icon: Settings },
   ];
+
+  const languageNames = {
+    en: 'English (US)',
+    hi: 'हिन्दी',
+    es: 'Español',
+    fr: 'Français',
+  };
 
   return (
     <>
@@ -35,7 +44,7 @@ export default function AppSidebar() {
           <ShieldCheck className="w-8 h-8 text-glow-cyan" />
           <div className="flex flex-col">
             <h2 className="text-lg font-bold tracking-tight font-headline">VoiceGuard AI</h2>
-            <p className="text-xs text-muted-foreground">Protection Active</p>
+            <p className="text-xs text-muted-foreground">{t('sidebarProtectionActive')}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -71,8 +80,8 @@ export default function AppSidebar() {
           <div className="flex items-center gap-2 p-2 rounded-lg glassmorphic">
             <Globe className="w-5 h-5 text-muted-foreground" />
             <div className="flex flex-col">
-                <span className="text-sm font-medium">Language</span>
-                <span className="text-xs text-muted-foreground">English (US)</span>
+                <span className="text-sm font-medium">{t('languageLabel')}</span>
+                <span className="text-xs text-muted-foreground">{languageNames[language]}</span>
             </div>
           </div>
       </SidebarFooter>

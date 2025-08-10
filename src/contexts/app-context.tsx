@@ -8,6 +8,7 @@ import { db, storage } from '@/lib/firebase';
 import type { AppState, AppContextType, UploadedFile, CallLog, EmergencyContact } from '@/types';
 import { initialCallHistory, initialEmergencyContacts } from '@/lib/mock-data';
 import { useToast } from '@/hooks/use-toast';
+import { translations } from '@/lib/i18n';
 
 const initialState: AppState = {
   activePanel: 'home',
@@ -32,6 +33,7 @@ const initialState: AppState = {
   emergencyContacts: initialEmergencyContacts,
   appPin: null,
   isAppLocked: false,
+  language: 'en',
 };
 
 export const AppContext = createContext<AppContextType>({
@@ -49,6 +51,8 @@ export const AppContext = createContext<AppContextType>({
   updateEmergencyContact: () => {},
   setAppPin: () => {},
   toggleLock: () => {},
+  setLanguage: () => {},
+  t: (key: keyof typeof translations.en) => translations.en[key] || key,
 });
 
 const parseTranscript = (transcript: string, contact: string) => {
@@ -327,8 +331,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
   };
 
+  const setLanguage = (language: 'en' | 'hi' | 'es' | 'fr') => {
+    setState(prevState => ({ ...prevState, language }));
+  };
+  
+  const t = (key: keyof (typeof translations)['en']) => {
+    return translations[state.language][key] || translations['en'][key] || key;
+  };
+
   return (
-    <AppContext.Provider value={{ ...state, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile, addEmergencyContact, removeEmergencyContact, updateEmergencyContact, setAppPin, toggleLock }}>
+    <AppContext.Provider value={{ ...state, t, setLanguage, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile, addEmergencyContact, removeEmergencyContact, updateEmergencyContact, setAppPin, toggleLock }}>
       {children}
     </AppContext.Provider>
   );

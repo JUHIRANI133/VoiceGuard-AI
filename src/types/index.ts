@@ -49,6 +49,8 @@ export interface CallLog {
     audioDataUri?: string;
 }
 
+export type Language = 'en' | 'hi' | 'es' | 'fr';
+
 export interface AppState {
     activePanel: Panel;
     isCallActive: boolean;
@@ -59,6 +61,7 @@ export interface AppState {
     emergencyContacts: EmergencyContact[];
     appPin: string | null;
     isAppLocked: boolean;
+    language: Language;
 }
 
 export interface AppContextType extends AppState {
@@ -75,4 +78,6 @@ export interface AppContextType extends AppState {
     updateEmergencyContact: (contact: EmergencyContact) => void;
     setAppPin: (pin: string | null) => void;
     toggleLock: () => void;
+    setLanguage: (language: Language) => void;
+    t: (key: string) => string;
 }

@@ -34,6 +34,7 @@ const initialState: AppState = {
   appPin: null,
   isAppLocked: false,
   language: 'en',
+  sendGpsToEmergencyContacts: false,
 };
 
 export const AppContext = createContext<AppContextType>({
@@ -53,6 +54,7 @@ export const AppContext = createContext<AppContextType>({
   toggleLock: () => {},
   setLanguage: () => {},
   t: (key: keyof typeof translations.en) => translations.en[key] || key,
+  setSendGpsToEmergencyContacts: () => {},
 });
 
 const parseTranscript = (transcript: string, contact: string) => {
@@ -339,8 +341,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return translations[state.language][key] || translations['en'][key] || key;
   };
 
+  const setSendGpsToEmergencyContacts = (enabled: boolean) => {
+    setState(prevState => ({ ...prevState, sendGpsToEmergencyContacts: enabled }));
+     if (enabled) {
+      toast({
+        title: "Live GPS Sharing Activated",
+        description: `Your location will be shared with your emergency contacts if a high-risk call is detected.`,
+      });
+    } else {
+      toast({
+        title: "Live GPS Sharing Deactivated",
+        description: "Your location will no longer be shared with emergency contacts.",
+      });
+    }
+  }
+
   return (
-    <AppContext.Provider value={{ ...state, t, setLanguage, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile, addEmergencyContact, removeEmergencyContact, updateEmergencyContact, setAppPin, toggleLock }}>
+    <AppContext.Provider value={{ ...state, t, setLanguage, setActivePanel, startMockCall, endCall, uploadAudioFile, setUploadedFiles, setCallHistory, updateUploadedFile, deleteUploadedFile, addEmergencyContact, removeEmergencyContact, updateEmergencyContact, setAppPin, toggleLock, setSendGpsToEmergencyContacts }}>
       {children}
     </AppContext.Provider>
   );

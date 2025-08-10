@@ -1,4 +1,5 @@
 
+
 export type Panel = 'home' | 'contacts' | 'uploaded-audio' | 'emotional-tracker' | 'transcript' | 'scam-map' | 'settings' | 'live-call' | 'profile';
 
 export type RiskLevel = 'low' | 'medium' | 'high';
@@ -62,6 +63,7 @@ export interface AppState {
     appPin: string | null;
     isAppLocked: boolean;
     language: Language;
+    sendGpsToEmergencyContacts: boolean;
 }
 
 export interface AppContextType extends AppState {
@@ -80,4 +82,5 @@ export interface AppContextType extends AppState {
     toggleLock: () => void;
     setLanguage: (language: Language) => void;
     t: (key: string) => string;
+    setSendGpsToEmergencyContacts: (enabled: boolean) => void;
 }

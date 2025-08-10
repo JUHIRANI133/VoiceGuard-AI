@@ -23,7 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 
 
 export default function SettingsPanel() {
-  const { emergencyContacts, addEmergencyContact, removeEmergencyContact, appPin, setAppPin, t, language, setLanguage } = useContext(AppContext);
+  const { emergencyContacts, addEmergencyContact, removeEmergencyContact, appPin, setAppPin, t, language, setLanguage, sendGpsToEmergencyContacts, setSendGpsToEmergencyContacts } = useContext(AppContext);
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
   const [newContact, setNewContact] = useState({ name: '', relation: '', phone: '', profession: '' });
@@ -183,7 +183,7 @@ export default function SettingsPanel() {
                       <Navigation className="w-5 h-5 text-primary" />
                       <Label htmlFor="send-gps">{t('sendGpsLabel')}</Label>
                     </div>
-                    <Switch id="send-gps" />
+                    <Switch id="send-gps" checked={sendGpsToEmergencyContacts} onCheckedChange={setSendGpsToEmergencyContacts} />
                   </div>
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
                     <div className="flex items-center gap-3">

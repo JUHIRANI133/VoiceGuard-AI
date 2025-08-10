@@ -27,7 +27,7 @@ export default function AppSidebar() {
     { id: 'emotional-tracker', label: t('sidebarEmotionalTracker'), icon: HeartPulse },
     { id: 'transcript', label: t('sidebarTranscript'), icon: FileText },
     { id: 'scam-map', label: t('sidebarScamMap'), icon: Map },
-    { id: 'report', label: 'Project Report', icon: FileBarChart },
+    { id: 'report', label: 'About the App', icon: FileBarChart },
     { id: 'settings', label: t('sidebarSettings'), icon: Settings },
   ];
 

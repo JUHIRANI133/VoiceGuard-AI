@@ -35,10 +35,9 @@
     --radius: 0.5rem;
 
     /* Custom Colors from Style Guide */
-    --color-pastel-lavender-light: 250 60% 98%;
-    --color-pastel-lavender-dark: 250 40% 92%;
-    --color-soft-peach: 25 100% 97%;
-    --color-pink-tea: 340 100% 98%;
+    --color-pastel-lavender-light: 237 69% 93%; /* #E3E4FA */
+    --color-soft-peach: 40 100% 85%; /* #FFE5B4 */
+    --color-pink-tea: 345 100% 91%; /* #FFD1DC */
     --color-cyan-accent: 185 100% 50%;
     
     --color-risk-safe: 154 100% 50%; /* #00FF88 */

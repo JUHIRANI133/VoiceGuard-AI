@@ -188,8 +188,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const uploadResult = await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(uploadResult.ref);
         
-        const placeholderDuration = "0:00";
-        const newTranscript = `(Transcript for ${file.name} would be generated via speech-to-text AI)`;
+        const placeholderDuration = "Processing...";
+        const newTranscript = `(Transcript for ${file.name} is being generated...)`;
 
         const docRef = await addDoc(collection(db, "audioFiles"), {
             name: file.name,
@@ -207,22 +207,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             audioDataUri: downloadURL,
         }
 
-        const newCallLog: CallLog = {
-          id: docRef.id,
-          type: 'Uploaded',
-          contact: file.name,
-          duration: placeholderDuration,
-          date: new Date().toISOString().split('T')[0],
-          risk: 'low',
-          emotion: 'Casual',
-          transcript: newTranscript,
-          audioDataUri: downloadURL,
-        };
-
         setState(prevState => ({
           ...prevState,
           uploadedFiles: [newUploadedFile, ...prevState.uploadedFiles],
-          callHistory: [newCallLog, ...prevState.callHistory],
         }));
         
         toast({ title: "Success", description: "File uploaded and saved to the database." });
@@ -236,11 +223,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setState(prevState => ({
                 ...prevState,
                 uploadedFiles: prevState.uploadedFiles.map(f => f.id === docRef.id ? { ...f, duration: formattedDuration } : f),
-                callHistory: prevState.callHistory.map(c => c.id === docRef.id ? { ...c, duration: formattedDuration } : c)
             }));
         };
         audio.onerror = () => {
              console.error("Could not load audio metadata to calculate duration.");
+             const fileDocRef = doc(db, 'audioFiles', docRef.id);
+             updateDoc(fileDocRef, { duration: "N/A" });
+             setState(prevState => ({
+                ...prevState,
+                uploadedFiles: prevState.uploadedFiles.map(f => f.id === docRef.id ? { ...f, duration: "N/A" } : f)
+            }));
         }
 
     } catch (error) {
@@ -274,7 +266,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setState(prevState => ({
               ...prevState,
               uploadedFiles: prevState.uploadedFiles.filter(f => f.id !== id),
-              callHistory: prevState.callHistory.filter(c => c.id !== id || c.type !== 'Uploaded'),
           }));
           toast({ title: "File Deleted", variant: "destructive" });
       } catch (error) {

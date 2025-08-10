@@ -1,1 +1,7 @@
-// Flows will be imported for their side effects in this file.
+import { config } from 'dotenv';
+config();
+
+import '@/ai/flows/adaptive-scam-model.ts';
+import '@/ai/flows/emotional-manipulation-detection.ts';
+import '@/ai/flows/detect-scam-patterns.ts';
+import '@/ai/flows/synthetic-voice-detection.ts';

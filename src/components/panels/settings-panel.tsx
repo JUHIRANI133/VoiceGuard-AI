@@ -20,6 +20,7 @@ import {
 import { AppContext } from '@/contexts/app-context';
 import type { EmergencyContact, Language } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 
 export default function SettingsPanel() {
@@ -185,13 +186,20 @@ export default function SettingsPanel() {
                     </div>
                     <Switch id="send-gps" checked={sendGpsToEmergencyContacts} onCheckedChange={setSendGpsToEmergencyContacts} />
                   </div>
-                  <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
-                    <div className="flex items-center gap-3">
-                      <Siren className="w-5 h-5 text-primary" />
-                      <Label htmlFor="contact-police">{t('contactPoliceLabel')}</Label>
-                    </div>
-                    <Switch id="contact-police" />
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                        <div className="flex items-center gap-3">
+                          <Siren className="w-5 h-5 text-primary" />
+                          <Label htmlFor="contact-police">{t('contactPoliceLabel')}</Label>
+                        </div>
+                        <Switch id="contact-police" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="glassmorphic max-w-xs">
+                      <p>{t('contactPoliceTooltip')}</p>
+                    </TooltipContent>
+                  </Tooltip>
                   <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
                     <div className="flex items-center gap-3">
                       <LocateFixed className="w-5 h-5 text-primary" />

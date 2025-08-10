@@ -38,6 +38,7 @@ export const translations = {
     preventionDescription: "Manage prevention and response settings.",
     sendGpsLabel: "Send Live GPS Location",
     contactPoliceLabel: "Automatically Contact Police",
+    contactPoliceTooltip: "When enabled, the nearest police station will be automatically notified of a potential threat in your area during a high-risk call.",
     detectLocationLabel: "Detect Caller Location",
   },
   hi: {
@@ -78,6 +79,7 @@ export const translations = {
     preventionDescription: "निवारण और प्रतिक्रिया सेटिंग्स प्रबंधित करें।",
     sendGpsLabel: "लाइव जीपीएस स्थान भेजें",
     contactPoliceLabel: "स्वचालित रूप से पुलिस से संपर्क करें",
+    contactPoliceTooltip: "सक्षम होने पर, उच्च-जोखिम वाली कॉल के दौरान आपके क्षेत्र में संभावित खतरे के बारे में निकटतम पुलिस स्टेशन को स्वचालित रूप से सूचित किया जाएगा।",
     detectLocationLabel: "कॉलर का स्थान पता लगाएँ",
   },
   es: {
@@ -118,6 +120,7 @@ export const translations = {
     preventionDescription: "Gestionar la configuración de prevención y respuesta.",
     sendGpsLabel: "Enviar ubicación GPS en vivo",
     contactPoliceLabel: "Contactar a la policía automáticamente",
+    contactPoliceTooltip: "Cuando está habilitado, la estación de policía más cercana será notificada automáticamente de una posible amenaza en su área durante una llamada de alto riesgo.",
     detectLocationLabel: "Detectar la ubicación de la persona que llama",
   },
   fr: {
@@ -158,6 +161,7 @@ export const translations = {
     preventionDescription: "Gérer les paramètres de prévention et de réponse.",
     sendGpsLabel: "Envoyer la position GPS en direct",
     contactPoliceLabel: "Contacter automatiquement la police",
+    contactPoliceTooltip: "Lorsqu'il est activé, le poste de police le plus proche sera automatiquement informé d'une menace potentielle dans votre région lors d'un appel à haut risque.",
     detectLocationLabel: "Détecter l'emplacement de l'appelant",
   },
 };

@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Shield, Bell, Globe, Languages } from "lucide-react";
+import { Shield, Bell, Globe, PhoneIncoming, Siren, Users, KeyRound } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -27,31 +27,39 @@ export default function SettingsPanel() {
            <Card className="glassmorphic-card border-primary/20">
             <AccordionTrigger className="p-6 hover:no-underline">
               <CardHeader className="p-0 text-left">
-                <CardTitle className="flex items-center gap-2"><Shield className="text-primary"/> Protection & Privacy</CardTitle>
-                <CardDescription>Control how VoiceGuard AI protects you.</CardDescription>
+                <CardTitle className="flex items-center gap-2"><Shield className="text-primary"/> Protection</CardTitle>
+                <CardDescription>Manage your security and emergency settings.</CardDescription>
               </CardHeader>
             </AccordionTrigger>
             <AccordionContent>
               <CardContent className="space-y-6 pt-0">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="protection-mode">Protection Mode</Label>
-                  <Select defaultValue="cloud">
-                    <SelectTrigger id="protection-mode" className="w-[180px] glassmorphic">
-                      <SelectValue placeholder="Select mode" />
-                    </SelectTrigger>
-                    <SelectContent className="glassmorphic">
-                      <SelectItem value="cloud">Cloud (Max Accuracy)</SelectItem>
-                      <SelectItem value="on-device">On-Device (Privacy)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                  <div className="flex items-center gap-3">
+                     <PhoneIncoming className="w-5 h-5 text-primary" />
+                     <Label htmlFor="record-unknown">Turn on recording for unknown numbers</Label>
+                  </div>
+                  <Switch id="record-unknown" defaultChecked/>
                 </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="privacy-mode">On-Device Privacy Mode</Label>
-                  <Switch id="privacy-mode" />
+                 <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                  <div className="flex items-center gap-3">
+                     <Siren className="w-5 h-5 text-primary" />
+                     <Label htmlFor="sos-alert">Send S.O.S alert to emergency contacts</Label>
+                  </div>
+                  <Switch id="sos-alert" />
                 </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="ephemeral-storage">Ephemeral Storage</Label>
-                  <Switch id="ephemeral-storage" defaultChecked />
+                <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                   <div className="flex items-center gap-3">
+                     <Users className="w-5 h-5 text-primary" />
+                     <Label>Edit emergency contact</Label>
+                  </div>
+                  <Button variant="outline" size="sm">Edit</Button>
+                </div>
+                 <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                  <div className="flex items-center gap-3">
+                     <KeyRound className="w-5 h-5 text-primary" />
+                     <Label>Add pin to the app</Label>
+                  </div>
+                  <Button variant="outline" size="sm">Add PIN</Button>
                 </div>
               </CardContent>
             </AccordionContent>

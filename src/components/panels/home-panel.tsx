@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -10,19 +10,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Mic, Upload, Phone, Clock, AlertTriangle, CheckCircle, PlayCircle, Loader, Volume2, FileText, X } from 'lucide-react';
 import { generateSpeech } from '@/ai/flows/text-to-speech';
 import { ScrollArea } from '../ui/scroll-area';
+import { AppContext } from '@/contexts/app-context';
+import { useContext } from 'react';
 
 const callHistory = [
   { id: 1, type: 'Incoming', contact: 'Unknown', duration: '5:21', date: '2024-07-28', risk: 'high', transcript: "Speaker1: Namaste, is this Aruna Mehta? Speaker2: Yes, speaking. Who is this? Speaker1: Ma'am, I am calling from your bank's KYC department. Your account will be blocked if you do not update your PAN card details immediately. Speaker2: Oh my! But I just did this last month. Are you sure? Speaker1: Yes ma'am, it is a new RBI mandate. To avoid suspension, you must click the link I just sent you via SMS and enter your details. It is very urgent. Speaker2: A link via SMS? My bank always says never to click such links. This sounds suspicious. Speaker1: Ma'am, this is a secure portal! Your account will be frozen in 10 minutes if you don't comply. Do you want to lose access to all your money? Think of the trouble! Speaker2: My phone is giving me a scam alert... I am not comfortable with this. I will visit the branch tomorrow. Speaker1: There is no time for that! You must do it now! This is your final warning!", voice: 'Algenib' },
-  { id: 2, type: 'Outgoing', contact: 'Aanya Sharma', duration: '12:45', date: '2024-07-28', risk: 'low', transcript: "Speaker1: Hi Aanya, it's me. Just wanted to see how you were doing. Speaker2: Hey Aruna! I'm good, just got back from the market. How are you? Speaker1: I'm well. Let's catch up this weekend?", voice: 'Sirius' },
+  { id: 2, type: 'Incoming', contact: 'Aarav (Son)', duration: '3:15', date: '2024-07-28', risk: 'high', transcript: "Speaker1: [Voice trembling] “Mom… it’s me, Aarav. Please don’t panic… I’ve had an accident.” Speaker2: “Oh my God! Aarav, are you alright? Where are you?” Speaker1: “I’m in the hospital. They won’t treat me unless I pay the admission fee… ₹50,000 right now. Please, Mom, I’m scared.” Speaker2: “But… your phone sounds different.” Speaker1: “It’s the hospital’s phone. Mom, there’s no time, please transfer the money to this account immediately. I’ll explain later.”", voice: 'Sirius' },
   { id: 3, type: 'Incoming', contact: 'Unknown', duration: '2:03', date: '2024-07-27', risk: 'medium', transcript: "Speaker1: Hello, you have won a lottery for 1 million rupees! To claim your prize, please pay a small transaction fee of 5000 rupees. Speaker2: A lottery? I don't remember entering one. This sounds like a scam. Speaker1: Sir, this is a legitimate offer! Don't miss this chance!", voice: 'Arcturus' },
   { id: 4, type: 'Incoming', contact: 'Aditya Verma', duration: '8:11', date: '2024-07-26', risk: 'low', transcript: "Speaker1: Hi Aditya, it's Aruna. I was calling about the project report. Have you had a chance to look at it? Speaker2: Yes, I have. It looks good, just a few minor changes needed. I'll send you an email.", voice: 'Vega' },
-  { id: 5, type: 'Outgoing', contact: 'Priya Singh (Mom)', duration: '22:30', date: '2024-07-26', risk: 'low', transcript: "Speaker1: Hi Mom, how are you? Speaker2: I'm good beta, it's Aruna. Have you eaten? Don't work too late. Speaker1: Yes mom, I've eaten. I'll call you tomorrow.", voice: 'Capella' },
-  { id: 6, type: 'Incoming', contact: 'Pizza Delivery', duration: '1:15', date: '2024-07-25', risk: 'low', transcript: "Speaker1: Hello, I'm at your door with your pizza order. Speaker2: Great, coming!", voice: 'Rigel' },
+  { id: 5, 'type': 'Outgoing', 'contact': 'Priya Singh (Mom)', duration: '22:30', date: '2024-07-26', risk: 'low', transcript: "Speaker1: Hi Mom, how are you? Speaker2: I'm good beta, it's Aruna. Have you eaten? Don't work too late. Speaker1: Yes mom, I've eaten. I'll call you tomorrow.", voice: 'Capella' },
+  { id: 6, 'type': 'Incoming', 'contact': 'Pizza Delivery', duration: '1:15', date: '2024-07-25', risk: 'low', transcript: "Speaker1: Hello, I'm at your door with your pizza order. Speaker2: Great, coming!", voice: 'Rigel' },
   { id: 7, type: 'Incoming', contact: 'Spam Caller', duration: '0:35', date: '2024-07-25', risk: 'high', transcript: "Speaker1: We are calling about your car's extended warranty. Speaker2: Please remove me from your list.", voice: 'Procyon' },
-  { id: 8, type: 'Outgoing', contact: 'Vikram Reddy', duration: '7:55', date: '2024-07-24', risk: 'low', transcript: "Speaker1: Vikram, it's Aruna. Are we still on for the movie tonight? Speaker2: Yes, of course. See you at 7.", voice: 'Achernar' },
+  { id: 8, 'type': 'Outgoing', 'contact': 'Vikram Reddy', duration: '7:55', date: '2024-07-24', risk: 'low', transcript: "Speaker1: Vikram, it's Aruna. Are we still on for the movie tonight? Speaker2: Yes, of course. See you at 7.", voice: 'Achernar' },
 ];
 
 export default function HomePanel() {
+  const { startMockCall } = useContext(AppContext);
   const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
@@ -77,7 +80,7 @@ export default function HomePanel() {
               </p>
             </CardContent>
             <CardFooter>
-              <Button size="lg" className="w-full font-bold">
+              <Button size="lg" className="w-full font-bold" onClick={startMockCall}>
                 <Mic className="mr-2" /> Start Recording
               </Button>
             </CardFooter>

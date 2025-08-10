@@ -2,6 +2,7 @@
 
 import React, { createContext, useState, useRef, useCallback } from 'react';
 import type { AppState, AppContextType, CallData } from '@/types';
+import { callHistory } from '@/lib/mock-data';
 
 const initialState: AppState = {
   activePanel: 'home',
@@ -30,20 +31,30 @@ export const AppContext = createContext<AppContextType>({
   endCall: () => {},
 });
 
-const mockTranscription = [
-  { speaker: 'Caller', text: "Mom... it's me, Aarav. Please don't panic... I've had an accident." },
-  { speaker: 'You', text: "Oh my God! Aarav, are you alright? Where are you?" },
-  { speaker: 'Caller', text: "I'm in the hospital. They won't treat me unless I pay the admission fee... ?50,000 right now. Please, Mom, I'm scared.", riskIncrease: 30, rationale: "Sudden accident claim and urgent demand for money are classic scam indicators.", analysis: { sentiment: 'Stressed' } },
-  { speaker: 'You', text: "But... your phone sounds different." },
-  { speaker: 'Caller', text: "It's the hospital's phone. Mom, there's no time, please transfer the money to this account immediately. I'll explain later.", riskIncrease: 40, rationale: "High-pressure tactics and a request for an immediate, unverified bank transfer are major red flags. Voice analysis suggests a potential deepfake.", analysis: { urgency: true, syntheticVoice: true } },
-  { speaker: 'You', text: "This is all too fast. My phone is warning me this could be a scam. Let me call your father." },
-  { speaker: 'Caller', text: "No, don't! There's no time! If you don't send the money in the next 5 minutes, it'll be too late!", riskIncrease: 20, rationale: "Extreme urgency and attempts to isolate the victim are hallmarks of a sophisticated scam.", analysis: { sentiment: 'Threatening' } }
-];
+const parseTranscript = (transcript: string, contact: string) => {
+    const speakerRegex = /(Speaker[12]:|Mrs\. Mehta:|Aarav \(Scammer\):|Rohit \(Scammer\):|Emily \(Scammer\):|Rishab:|Ravi:|Rahul:|Neha:|Vendor Rep \(Scammer\):|Sunita Mehta:|Aruna:|Mother:)/g;
+    const parts = transcript.split(speakerRegex).filter(part => part.trim() !== '');
+
+    const chatSegments = [];
+    for (let i = 0; i < parts.length; i += 2) {
+        const speakerLabel = parts[i];
+        const text = parts[i+1] || '';
+
+        let speakerName = 'You';
+        if (speakerLabel.includes('Speaker1') || speakerLabel.includes('(Scammer)') || /Rishab|Ravi|Rahul|Vendor|Sunita Mehta/.test(speakerLabel)) {
+            speakerName = 'Caller';
+        }
+        chatSegments.push({ speaker: speakerName, text: text.trim() });
+    }
+    return chatSegments;
+};
+
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<AppState>(initialState);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const transcriptionIndexRef = useRef<number>(0);
+  const mockCallSegments = useRef<{ speaker: string, text: string }[]>([]);
 
   const endCall = useCallback(() => {
     if (intervalRef.current) {
@@ -51,6 +62,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     intervalRef.current = null;
     transcriptionIndexRef.current = 0;
+    mockCallSegments.current = [];
     setState((prevState) => ({
       ...prevState,
       isCallActive: false,
@@ -61,54 +73,52 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const startMockCall = () => {
+    // Select a random call from history
+    const randomCall = callHistory[Math.floor(Math.random() * callHistory.length)];
+    mockCallSegments.current = parseTranscript(randomCall.transcript, randomCall.contact);
+    
     setState((prevState) => ({
       ...prevState,
       isCallActive: true,
       activePanel: 'live-call',
       callData: {
-        callerName: 'Aarav (Son) - Impersonated',
-        callerNumber: '+91 91234 56789',
+        callerName: randomCall.contact,
+        callerNumber: 'Unknown Number',
         riskScore: 10,
         transcription: '',
-        rationale: 'Call initiated. Voice analysis suggests potential voice cloning. Monitoring for suspicious activity.',
+        rationale: 'Call initiated. Monitoring for suspicious activity.',
         analysis: {
-            voiceprintMatch: 55,
+            voiceprintMatch: Math.floor(Math.random() * 40) + 55, // 55-95%
             numberLegitimacy: 'Verified',
             sentiment: 'Neutral',
             urgency: false,
-            syntheticVoice: true,
+            syntheticVoice: randomCall.risk === 'high', // Assume high risk calls might use synthetic voices
         }
       },
       riskLevel: 'low',
     }));
 
     intervalRef.current = setInterval(() => {
-        if (transcriptionIndexRef.current >= mockTranscription.length) {
+        if (transcriptionIndexRef.current >= mockCallSegments.current.length) {
             endCall();
             return;
         }
 
-        const currentSegment = mockTranscription[transcriptionIndexRef.current];
+        const currentSegment = mockCallSegments.current[transcriptionIndexRef.current];
         transcriptionIndexRef.current += 1;
         
         setState(prevState => {
             const newTranscription = `${prevState.callData.transcription}${prevState.callData.transcription ? '\n\n' : ''}${currentSegment.speaker}: ${currentSegment.text}`;
-            let newRiskScore = prevState.callData.riskScore;
+            
+            // Simplified risk scoring for demo
+            const riskIncrease = (currentSegment.text.match(/urgent|immediately|now|don't tell|account|money|bank|transfer/gi) || []).length * 15;
+            let newRiskScore = Math.min(100, prevState.callData.riskScore + riskIncrease);
+            
             let newRationale = prevState.callData.rationale;
-            let newAnalysis = { ...prevState.callData.analysis };
-            
-            if (currentSegment.riskIncrease) {
-              newRiskScore = Math.min(100, newRiskScore + currentSegment.riskIncrease);
+            if (riskIncrease > 0) {
+              newRationale = "Detected suspicious keywords related to financial urgency.";
             }
 
-            if(currentSegment.rationale) {
-              newRationale = currentSegment.rationale;
-            }
-
-            if(currentSegment.analysis) {
-                newAnalysis = { ...newAnalysis, ...currentSegment.analysis };
-            }
-            
             const newRiskLevel = newRiskScore > 75 ? 'high' : newRiskScore > 40 ? 'medium' : 'low';
 
             return {
@@ -118,7 +128,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                     transcription: newTranscription,
                     riskScore: newRiskScore,
                     rationale: newRationale,
-                    analysis: newAnalysis,
                 },
                 riskLevel: newRiskLevel,
             }

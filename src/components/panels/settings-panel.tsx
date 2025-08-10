@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useContext } from 'react';
+import { useTheme } from 'next-themes';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Shield, Bell, Globe, PhoneIncoming, Siren, Users, KeyRound, PlusCircle, Trash2, Edit } from "lucide-react";
+import { Shield, Bell, Globe, PhoneIncoming, Siren, Users, KeyRound, PlusCircle, Trash2, Edit, Palette, Sun, Moon } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -28,6 +29,7 @@ export default function SettingsPanel() {
   const [newContact, setNewContact] = useState({ name: '', relation: '', phone: '', profession: '' });
   const [pin, setPin] = useState('');
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
   const handleAddContact = () => {
     if (newContact.name && newContact.relation && newContact.phone) {
@@ -105,6 +107,30 @@ export default function SettingsPanel() {
             </Card>
           </AccordionItem>
           
+           <AccordionItem value="item-3" className="border-none">
+            <Card className="glassmorphic-card border-primary/20">
+              <AccordionTrigger className="p-6 hover:no-underline">
+                <CardHeader className="p-0 text-left">
+                  <CardTitle className="flex items-center gap-2"><Palette className="text-primary"/> Appearance</CardTitle>
+                  <CardDescription>Customize the look and feel of the app.</CardDescription>
+                </CardHeader>
+              </AccordionTrigger>
+              <AccordionContent>
+                <CardContent className="space-y-6 pt-0">
+                  <div className="flex items-center justify-between p-4 rounded-lg glassmorphic">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        {theme === 'dark' ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
+                        <Label htmlFor="dark-mode">Dark Mode</Label>
+                      </div>
+                    </div>
+                    <Switch id="dark-mode" checked={theme === 'dark'} onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}/>
+                  </div>
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+
           <AccordionItem value="item-2" className="border-none">
             <Card className="glassmorphic-card border-primary/20">
               <AccordionTrigger className="p-6 hover:no-underline">

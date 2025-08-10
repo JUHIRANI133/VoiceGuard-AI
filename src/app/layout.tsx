@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { AppProvider } from '@/contexts/app-context';
 import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const fontBody = Inter({
   subsets: ['latin'],
@@ -39,10 +40,17 @@ export default function RootLayout({
           fontHeadline.variable
         )}
       >
-        <AppProvider>
-          {children}
-          <Toaster />
-        </AppProvider>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+          <AppProvider>
+            {children}
+            <Toaster />
+          </AppProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

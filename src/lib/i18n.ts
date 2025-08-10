@@ -9,7 +9,7 @@ export const translations = {
     sidebarTranscript: "Transcript",
     sidebarScamMap: "Scam Map",
     sidebarSettings: "Settings",
-    sidebarProtectionActive: "Protection Active",
+    sidebarTagline: "Your guardian against digital deception",
     
     settingsTitle: "Settings",
     settingsDescription: "Customize your VoiceGuard AI experience.",
@@ -51,7 +51,7 @@ export const translations = {
     sidebarTranscript: "प्रतिलिपि",
     sidebarScamMap: "घोटाला मानचित्र",
     sidebarSettings: "सेटिंग्स",
-    sidebarProtectionActive: "सुरक्षा सक्रिय",
+    sidebarTagline: "डिजिटल धोखे के खिलाफ आपका अभिभावक",
 
     settingsTitle: "सेटिंग्स",
     settingsDescription: "अपने VoiceGuard AI अनुभव को अनुकूलित करें।",
@@ -93,7 +93,7 @@ export const translations = {
     sidebarTranscript: "Transcripción",
     sidebarScamMap: "Mapa de Estafas",
     sidebarSettings: "Configuración",
-    sidebarProtectionActive: "Protección Activa",
+    sidebarTagline: "Tu guardián contra el engaño digital",
 
     settingsTitle: "Configuración",
     settingsDescription: "Personaliza tu experiencia con VoiceGuard AI.",
@@ -135,7 +135,7 @@ export const translations = {
     sidebarTranscript: "Transcription",
     sidebarScamMap: "Carte des Arnaques",
     sidebarSettings: "Paramètres",
-    sidebarProtectionActive: "Protection Active",
+    sidebarTagline: "Votre gardien contre la tromperie numérique",
 
     settingsTitle: "Paramètres",
     settingsDescription: "Personnalisez votre expérience VoiceGuard AI.",

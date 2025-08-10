@@ -44,7 +44,7 @@ export default function AppSidebar() {
           <ShieldCheck className="w-8 h-8 text-glow-cyan" />
           <div className="flex flex-col">
             <h2 className="text-lg font-bold tracking-tight font-headline">VoiceGuard AI</h2>
-            <p className="text-xs text-muted-foreground">{t('sidebarProtectionActive')}</p>
+            <p className="text-xs text-muted-foreground">{t('sidebarTagline')}</p>
           </div>
         </div>
       </SidebarHeader>

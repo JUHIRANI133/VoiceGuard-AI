@@ -96,7 +96,7 @@
   }
 
   .glassmorphic-card {
-     @apply bg-white/30 backdrop-blur-lg border-primary/20 shadow-primary/10 shadow-lg rounded-lg;
+     @apply bg-background/30 backdrop-blur-lg border-primary/20 shadow-primary/10 shadow-lg rounded-lg;
   }
 
   .text-glow-cyan {

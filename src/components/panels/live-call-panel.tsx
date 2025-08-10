@@ -6,8 +6,8 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { ScrollArea } from '../ui/scroll-area';
-import { Separator } from '../ui/separator';
 import { PhoneOff, UserCheck, Mic, Siren, AlertTriangle, Bot } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function LiveCallPanel() {
   const { callData, riskLevel, endCall } = useContext(AppContext);
